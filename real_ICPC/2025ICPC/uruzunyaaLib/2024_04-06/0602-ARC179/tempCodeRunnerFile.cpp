@@ -1,1 +1,0 @@
-kiroku[i].size()

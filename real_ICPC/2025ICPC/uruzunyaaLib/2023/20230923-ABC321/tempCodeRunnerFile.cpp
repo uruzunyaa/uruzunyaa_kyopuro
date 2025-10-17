@@ -1,1 +1,0 @@
-ofstream fout("./DefaultFile");//出力する場合の出力先を指定
