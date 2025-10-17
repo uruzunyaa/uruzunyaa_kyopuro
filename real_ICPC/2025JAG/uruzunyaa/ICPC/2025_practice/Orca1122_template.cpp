@@ -1,0 +1,18 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+#define rep(i, n) for (ll i = 0; i < n; ++i)
+
+int dx[8] = {0, 1, 0, -1, 1, 1, -1, -1};
+int dy[8] = {1, 0, -1, 0, 1, -1, 1, -1};
+
+int solve() {
+	//if(){return 1;}
+    return 0;
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    while(solve() == 0);
+    return 0;
+}

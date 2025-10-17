@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rectangle and Line Drawing</title>
+  <style>
+    #canvas {
+      border: 1px solid transparent; /* 外側の境界線を透明に設定 */
+      width: 500px;
+      height: 500px;
+    }
+  </style>
+</head>
+<body onload="drawRectangleAndLine()"> <!-- ページ読み込み時に表示を行う -->
+  <h2>Rectangle and Line Drawing</h2>
+  <label for="rectangleWidth">長方形の横幅:</label>
+  <input type="number" id="rectangleWidth" max="10" min="1" value="5" oninput="drawRectangleAndLine()"><br>
+
+  <label for="rectangleHeight">長方形の縦幅:</label>
+  <input type="number" id="rectangleHeight" max="10" min="1" value="5" oninput="drawRectangleAndLine()"><br>
+
+  <label for="pointX">点の座標のX座標:</label>
+  <input type="number" id="pointX" max="10" min="0" value="3" oninput="drawRectangleAndLine()"><br> <!-- 最小値を0に変更 -->
+
+  <label for="pointY">点の座標のY座標:</label>
+  <input type="number" id="pointY" max="10" min="0" value="3" oninput="drawRectangleAndLine()"><br> <!-- 最小値を0に変更 -->
+
+  <label for="lineAngle">直線の角度（度数で与えられ、180なら水平線を意味する）:</label>
+  <input type="number" id="lineAngle" value="45" oninput="drawRectangleAndLine()"><br>
+
+  <div id="canvas"></div>
+
+  <script>
+    function drawRectangleAndLine() {
+      const rectangleWidth = parseInt(document.getElementById('rectangleWidth').value);
+      const rectangleHeight = parseInt(document.getElementById('rectangleHeight').value);
+      const pointX = parseInt(document.getElementById('pointX').value);
+      const pointY = parseInt(document.getElementById('pointY').value);
+      const lineAngle = parseInt(document.getElementById('lineAngle').value);
+
+      // Calculate the coordinates of the line endpoints
+      const lineLength = 100; // You can adjust this for longer or shorter lines
+      const lineEndpoint1X = pointX - lineLength * Math.cos(lineAngle * (Math.PI / 180));
+      const lineEndpoint1Y = pointY - lineLength * Math.sin(lineAngle * (Math.PI / 180));
+      const lineEndpoint2X = pointX + lineLength * Math.cos(lineAngle * (Math.PI / 180));
+      const lineEndpoint2Y = pointY + lineLength * Math.sin(lineAngle * (Math.PI / 180));
+
+      // Create the SVG elements to draw the rectangle, point, and line
+      const svgNamespace = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNamespace, "svg");
+      svg.setAttribute("width", "500");
+      svg.setAttribute("height", "500");
+      const canvas = document.getElementById("canvas");
+      canvas.innerHTML = ""; // Clear previous drawings
+      canvas.appendChild(svg);
+
+      // Draw the rectangle
+      const rectangle = document.createElementNS(svgNamespace, "rect");
+      rectangle.setAttribute("x", "50");
+      rectangle.setAttribute("y", "50");
+      rectangle.setAttribute("width", rectangleWidth * 40);
+      rectangle.setAttribute("height", rectangleHeight * 40);
+      rectangle.setAttribute("fill", "lightblue");
+      svg.appendChild(rectangle);
+
+      // Draw the point
+      const point = document.createElementNS(svgNamespace, "circle");
+      point.setAttribute("cx", 50 + pointX * 40);
+      point.setAttribute("cy", 50 + pointY * 40);
+      point.setAttribute("r", "5");
+      point.setAttribute("fill", "red");
+      svg.appendChild(point);
+
+      // Draw the line
+      const line = document.createElementNS(svgNamespace, "line");
+      line.setAttribute("x1", 50 + lineEndpoint1X * 40);
+      line.setAttribute("y1", 50 + lineEndpoint1Y * 40);
+      line.setAttribute("x2", 50 + lineEndpoint2X * 40);
+      line.setAttribute("y2", 50 + lineEndpoint2Y * 40);
+      line.setAttribute("stroke", "black");
+      svg.appendChild(line);
+    }
+  </script>
+</body>
+</html>

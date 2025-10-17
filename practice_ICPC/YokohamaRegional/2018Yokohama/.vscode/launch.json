@@ -1,0 +1,65 @@
+{
+	// IntelliSense を使用して利用可能な属性を学べます。
+	// 既存の属性の説明をホバーして表示します。
+	// 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "java",
+			"name": "C",
+			"request": "launch",
+			"mainClass": "C",
+			"projectName": "cpp23_ae0aefb2"
+		},
+		{
+			"name": "(gdb) 起動",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "プログラム名を入力してください (例: ${workspaceFolder}/a.out)",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "gdb の再フォーマットを有効にする",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "逆アセンブリ フレーバーを Intel に設定",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "GDB Debug",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/a.out",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "build",
+			"miDebuggerPath": "/usr/bin/gdb",
+			"logging": {
+				"trace": true,
+				"traceResponse": true,
+				"engineLogging": true
+			}
+		}
+	]
+}

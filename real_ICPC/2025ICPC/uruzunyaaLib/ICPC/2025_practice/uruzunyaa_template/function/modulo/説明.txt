@@ -1,0 +1,5 @@
+998244353系
+・power_mod
+・mod_inv
+・ncrmod
+など
