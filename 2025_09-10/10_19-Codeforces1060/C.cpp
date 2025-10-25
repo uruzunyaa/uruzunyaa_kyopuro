@@ -87,99 +87,68 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+vvl e(200001);
+
 void solve(){
 	ll n;
 	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+	vector<pair<ll,ll>>ab(n);
+	rep(i,n)cin>>ab[i].second;
+	rep(i,n)cin>>ab[i].first;
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
-
-	ll cnt=0;
 	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
+
+	sort(ab.begin(),ab.end());
+	ll ans=ab[0].first+ab[1].first;
+
+	map<ll,ll> kiroku;
+
+	loop(i,0,n-1){
+		ll tmp=ab[i].second;
+
+		rep(j,e[tmp].size()){
+			if(kiroku.count(e[tmp][j])){
+				cout<<0<<endl;
+				return;
+			}
+			kiroku[e[tmp][j]]=i;
 		}
 	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
+	//0を複数回
+	for(const auto & val:kiroku){
+		if(val.second==0)continue;
+		ll m=ab[0].second;
+		ll tmp=val.first;
+		ll res=(tmp-(m%tmp))%tmp;
+		ans=min(ans,res*ab[0].first);
 	}
 
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
+	//1以上を1回
+	loop(i,1,n-1){
+		ll tmp=ab[i].second+1;
+		if(kiroku.count(tmp))ans=min(ans,ab[i].first);
+		for(ll j=2;j*j<=tmp;j++){
+			if(tmp%j==0){
+				if(kiroku.count(j))ans=min(ans,ab[i].first);
+				if(kiroku.count(tmp/j))ans=min(ans,ab[i].first);
 			}
 		}
 	}
 
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	cout<<ans<<endl;
+	return;
 }
 
 //メイン
 int main(){
+	loop(i,2,200000){
+		if(e[i].size()==0){
+			for(ll j=i;j<=200000;j+=i){
+				e[j].push_back(i);
+			}
+		}
+	}
+
 	ll t;
 	cin>>t;
 	rep(i,t)solve();

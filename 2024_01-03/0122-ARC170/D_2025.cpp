@@ -90,92 +90,42 @@ vl dy={0,1,0,-1};
 void solve(){
 	ll n;
 	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+	vl a(n),b(n);
+	rep(i,n)cin>>a[i];
+	rep(i,n)cin>>b[i];
+	sort(a.rbegin(),a.rend());
+	sort(b.rbegin(),b.rend());
+	set<ll> aset;
+	ll dmx=0;
+	ll bind=0;
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
-
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
+	rep(i,n-1){
+		ll sums=a[i]+a[i+1];
+		while(bind!=n&&sums<=b[bind]){
+			ll tmp=inf;
+			auto it=aset.upper_bound(b[bind]);
+			if(it!=aset.end()){
+				tmp=min(tmp,*it-b[bind]);
 			}
+			if(it!=aset.begin()){
+				it--;
+				tmp=min(tmp,b[bind]-*it);
+			}
+			dmx=max(tmp,dmx);
+			bind++;
 		}
-	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
+		if(a[i]<=dmx){
+			cout<<"Bob"<<endl;
+			return;
 		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
+		if(a[i]-a[i+1]<b.back()){
+			cout<<"Alice"<<endl;
+			return;
 		}
+		aset.insert(a[i]);
 	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	cout<<"Bob"<<endl;
+	return;
 }
 
 //メイン

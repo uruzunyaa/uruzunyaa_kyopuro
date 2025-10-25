@@ -88,100 +88,41 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 void solve(){
-	ll n;
-	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+	ll n,q;
+	cin>>n>>q;
+	string s;
+	cin>>s;
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
+	bool isb=false;
+	rep(i,n)if(s[i]=='B')isb=true;
 
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
+	if(!isb){
+		rep(i,q){
+			ll a;
+			cin>>a;
+			cout<<a<<endl;
 		}
+		return;	
 	}
 
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
+	rep(i,q){
+		ll a;
+		cin>>a;
+		ll cnt=0;
+		while(a!=0){
+			if(s[cnt%n]=='B')a/=2;
+			else a--;
+			cnt++;
 		}
+		cout<<cnt<<endl;
 	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	return;
 }
 
 //メイン
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t)solve();	
 	return 0;
 }

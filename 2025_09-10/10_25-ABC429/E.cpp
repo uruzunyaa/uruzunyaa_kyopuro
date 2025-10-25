@@ -86,102 +86,72 @@ struct UnionFind {
 //グリッド問題等用
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
-
-void solve(){
-	ll n;
-	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
-
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
-
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
-		}
-	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
-}
+struct dist{
+	ll index;
+	ll cost;
+};
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n,m;
+	cin>>n>>m;
+	vvl g(n);
+	rep(i,m){
+		ll u,v;
+		cin>>u>>v;
+		u--,v--;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	string s;
+	cin>>s;
+
+
+	vector<pair<dist,dist>> d(n,{{inf,inf},{inf,inf}});
+	queue<dist> qi;
+	rep(i,n){
+		if(s[i]=='S')d[i].first={i,0},qi.push({i,0});
+	}
+
+	while(!qi.empty()){
+		ll i=qi.front().index;
+		ll cost=qi.front().cost;
+		qi.pop();
+		rep(j,g[i].size()){
+			if(d[g[i][j]].first.index>=inf){
+				bool f=false;
+				if(d[i].first.cost==cost){
+					d[g[i][j]].first=d[i].first;
+					d[g[i][j]].first.cost++;
+					f=true;
+				}
+				
+				if(d[i].second.cost==cost){
+					d[g[i][j]].second=d[i].second;
+					d[g[i][j]].second.cost++;
+					f=true;
+				}
+				if(f)qi.push({g[i][j],cost+1});
+			}else if(d[g[i][j]].second.index>=inf){
+				if(d[g[i][j]].first.index!=d[i].first.index){
+					if(d[i].first.cost!=cost)continue;
+					d[g[i][j]].second=d[i].first;
+					d[g[i][j]].second.cost++;
+				}else{
+					if(d[i].second.cost!=cost)continue;
+					d[g[i][j]].second=d[i].second;
+					d[g[i][j]].second.cost++;
+				}
+				qi.push({g[i][j],cost+1});
+			}else{
+				continue;
+			}
+		}
+	}
+	rep(i,n){
+		if(s[i]=='D'){
+			cout<<d[i].first.cost+d[i].second.cost<<endl;
+		}
+	}
 	return 0;
 }

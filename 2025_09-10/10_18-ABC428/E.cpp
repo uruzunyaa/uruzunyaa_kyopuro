@@ -87,101 +87,58 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	ll n;
-	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+vvl g;
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
+void dfs(ll node,ll before,ll cost,vl & dist){
+	dist[node]=cost;
+	rep(i,g[node].size()){
+		if(g[node][i]==before)continue;
+		dfs(g[node][i],node,cost+1,dist);
 	}
-
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
-		}
-	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	return;
 }
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n;
+	cin>>n;
+	g=vvl(n);
+	
+	vl dist0,dist1,dist2;
+	dist0=vl(n,inf);
+	dist1=vl(n,inf);
+	dist2=vl(n,inf);
+	
+	rep(i,n-1){
+		ll a,b;
+		cin>>a>>b;
+		a--,b--;
+		g[a].push_back(b);
+		g[b].push_back(a);
+	}
+	dfs(0,-1,0,dist0);
+	
+	ll node1=0;
+	rep(i,n){
+		if(dist0[i]>=dist0[node1])node1=i;
+	}
+
+	dfs(node1,-1,0,dist1);
+	ll node2=0;
+	rep(i,n){
+		if(dist1[i]>=dist1[node2])node2=i;
+	}
+
+	dfs(node2,-1,0,dist2);
+
+	rep(i,n){
+		if(dist1[i]<dist2[i]){
+			cout<<node2+1<<endl;
+		}else if(dist1[i]>dist2[i]){
+			cout<<node1+1<<endl;
+		}else{
+			cout<<max(node1,node2)+1<<endl;
+		}
+	}
 	return 0;
 }

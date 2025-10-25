@@ -87,101 +87,47 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	ll n;
-	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
-
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
-
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
-		}
-	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll q;
+	cin>>q;
+	vl st;
+	ll sum=0;
+	ll out=inf;
+	while(q--){
+		ll t;
+		cin>>t;
+		if(t==1){
+			char tmp;
+			cin>>tmp;
+			if(tmp=='('){
+				sum++;
+				st.push_back(1);
+			}else{
+				st.push_back(-1);
+				sum--;
+			}
+			if(sum==-1&&out==inf){
+				out=st.size();
+			}
+			if(out==inf&&sum==0){
+				cout<<"Yes"<<endl;
+			}else{
+				cout<<"No"<<endl;
+			}
+		}else{
+			if(out==st.size()){
+				out=inf;
+			}
+			sum-=st.back();
+			st.pop_back();
+			if(out==inf&&sum==0){
+				cout<<"Yes"<<endl;
+			}else{
+				cout<<"No"<<endl;
+			}
+		}
+	}
 	return 0;
 }

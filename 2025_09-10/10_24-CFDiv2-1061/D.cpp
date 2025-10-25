@@ -90,98 +90,50 @@ vl dy={0,1,0,-1};
 void solve(){
 	ll n;
 	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
+	vl ask;
+	loop(i,1,n-1)ask.push_back(i);
+	vl ans=ask;
+	ans.push_back(n);
 
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
+	rep(i,inf){
+		if(ans.size()==1)break;
+		ll asknum=(1LL<<i);
+		vl oddnum;
+		vl evennum;
+		rep(j,ans.size()){
+			if(ans[j]&asknum){
+				oddnum.push_back(ans[j]);
 			}else{
-				a[j][tmp]=i;
+				evennum.push_back(ans[j]);
 			}
 		}
-	}
 
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
+		vl odd;
+		vl even;
+		rep(j,ask.size()){
+			cout<<"? "<<ask[j]<<" "<<asknum<<endl;
+			ll res;
+			cin>>res;
+			if(res)odd.push_back(ask[j]);
+			else even.push_back(ask[j]);
 		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
+		if(odd.size()!=oddnum.size()){
+			ans=oddnum;
+			ask=odd;
 		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
+			ans=evennum;
+			ask=even;
 		}
 	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	cout<<"! "<<ans[0]<<endl;
+	return;
 }
 
 //メイン
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t)solve();	
 	return 0;
 }

@@ -82,106 +82,100 @@ struct UnionFind {
 	}
 };
 
+#include"atcoder/lazysegtree.hpp"
 
-//グリッド問題等用
-vl dx={1,0,-1,0};
-vl dy={0,1,0,-1};
+using S = long long;
+using F = long long;
 
-void solve(){
-	ll n;
-	cin>>n;
-	vl y(n);
-	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+const S INF = 8e18;
+const F ID = 8e18;
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
+S op(S a, S b){ return std::min(a, b); }
+S e(){ return INF; }
+S mapping(F f, S x){ return (f == ID ? x : f); }
+F composition(F f, F g){ return (f == ID ? g : f); }
+F id(){ return ID; }
 
-	ll cnt=0;
-	
-	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
-		}
-	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
-		}
-	}
-
-
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
-
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
-	}
-
-	
-
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
-}
+ll md=2000000000;
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n;
+	cin>>n;
+	vl w(n);
+	rep(i,n)cin>>w[i];
+
+	//mdが足されてなければ左で、左端座標がそれに加算されてる
+	std::vector<S> v(n,n-1);
+    atcoder::lazy_segtree<S, op, e, F, mapping, composition, id> seg(v);
+
+	vl nowl(n,0);
+
+	ll q;
+	cin>>q;
+	while(q--){
+		ll t;
+		cin>>t;
+		if(t==1){
+			ll v;
+			cin>>v;
+			v--;
+
+			ll tmp=seg.get(v);
+			if(tmp>=md){
+				tmp-=md;
+				ll r=nowl[tmp]+w[tmp];
+				nowl[v]=r-w[v];
+			}else{
+				nowl[v]=nowl[tmp];
+			}
+			
+			seg.apply(0,v+1,v);
+		}else if(t==2){
+			ll v;
+			cin>>v;
+			v--;
+			
+			ll tmp=seg.get(v);
+			if(tmp>=md){
+				tmp-=md;
+				ll r=nowl[tmp]+w[tmp];
+				nowl[v]=r-w[v];
+			}else{
+				nowl[v]=nowl[tmp];
+			}
+
+			seg.apply(0,v+1,v+md);
+		}else{
+			ll x;
+			cin>>x;
+			ll mn=0,mx=n-1;
+			if(x>=w.back()){
+				cout<<0<<endl;
+				continue;
+			}
+			while(mn!=mx){
+				ll mid=mn+mx;
+				mid/=2;
+
+				ll tmp=seg.get(mid);
+				if(tmp>=md){
+					tmp-=md;
+					ll r=nowl[tmp]+w[tmp];
+					nowl[mid]=r-w[mid];
+				}else{
+					nowl[mid]=nowl[tmp];
+				}
+
+				if(nowl[mid]<=x&&x<nowl[mid]+w[mid]){
+					mx=mid;
+				}else{
+					mn=mid+1;
+				}
+			}
+			cout<<n-mn<<endl;
+		}
+	}
+
 	return 0;
 }

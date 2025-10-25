@@ -87,101 +87,97 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+bool dfs(ll node,ll before,set<ll>&st,vvl & g,ll n,vl& vec){
+	if(node==n-1){
+		vec.push_back(n-1);
+		st.insert(n-1);
+		return true;
+	}
+	st.insert(node);
+	vec.push_back(node);
+
+	rep(i,g[node].size()){
+		if(g[node][i]==before)continue;
+		if(dfs(g[node][i],node,st,g,n,vec))return true;
+	}
+
+	st.erase(node);
+	vec.pop_back();
+	return false;
+}
+
+void getdist(ll node,ll before,vvl & g,vl & dist,ll nowdist){
+	dist[node]=nowdist;
+	rep(i,g[node].size()){
+		if(g[node][i]==before)continue;
+		getdist(g[node][i],node,g,dist,nowdist+1);
+	}
+	return;
+}
+
 void solve(){
 	ll n;
 	cin>>n;
-	vl y(n);
+	vvl g(n);
+	rep(i,n-1){
+		ll a,b;
+		cin>>a>>b;
+		a--,b--;
+		g[a].push_back(b);
+		g[b].push_back(a);
+	}
+
 	set<ll> st;
-	rep(i,n)cin>>y[i],y[i]--,st.insert(y[i]);
+	vl vec;
+	vl dist(n);
 
-	if(st.size()!=n){
-		cout<<"No"<<endl;
-		return;
-	}
 
-	ll cnt=0;
-	
+	dfs(0,-1,st,g,n,vec);
+	getdist(0,-1,g,dist,0);
+
+	vvl ans;
+	ll movecnt=0;
+	vector<pair<ll,ll>> deleted;
+
 	rep(i,n){
-		if(y[i]==i)cnt++;
-		if(y[y[i]]!=i){
-			cout<<"No"<<endl;
-			return ;
+		if(!st.count(i)){
+			deleted.push_back({dist[i],i});
 		}
 	}
-
-	if(n%2==1&&cnt!=1){
-		cout<<"No"<<endl;
-		return ;
-	}
-
-	//round-robin
-	ll m=n;
-	if(n%2==0)m--;
-	vvl a(n,vl(n,n));
-	loop(i,1,m){
-		rep(j,m){
-			ll tmp=(2*m-i-j)%m;
-			if(j==tmp&&n%2==0){
-				a[j][n-1]=i;
-				a[n-1][j]=i;
-			}else{
-				a[j][tmp]=i;
-			}
+	sort(deleted.rbegin(),deleted.rend());
+	rep(j,deleted.size()){
+		ll i=deleted[j].second;
+		if(dist[i]%2==movecnt%2){
+			movecnt++;
+			ans.push_back({1});
 		}
+		ans.push_back({2,i+1});
+		movecnt++;
+		ans.push_back({1});
+		
 	}
 
 
-	set<pair<ll,ll>> diff;
-	set<ll> same;
-	rep(i,n)rep(j,n){
-		if(a[i][j]==1){
-			if(i==j)same.insert(i);
-			else diff.insert({i,j});
-		}
-	}
+	if(movecnt%2==1)ans.push_back({1});
 
-	cnt/=2;
-	while(cnt--){
-		pair<ll,ll> tmp=*diff.begin();
-		ll i=tmp.first,j=tmp.second;
-		diff.erase(diff.begin());
-		diff.erase({j,i});
-		swap(a[i][i],a[i][j]);
-		swap(a[j][j],a[j][i]);
-		same.insert(i);
-		same.insert(j);
+	rep(i,vec.size()-1){
+		ans.push_back({1});
+		ans.push_back({2,vec[i]+1});
 	}
+	ans.pop_back();
 
 	
+	cout<<ans.size()<<endl;
+	vvdbg(ans);
+	cout<<endl;
 
-	vl p(n,inf);
-	rep(i,n){
-		if(p[i]!=inf)continue;
-		if(y[i]==i){
-			p[i]=*same.begin();
-			same.erase(same.begin());
-		}else{
-			ll j=y[i];
-			pair<ll,ll> tmp=*diff.begin();
-			p[i]=tmp.first;
-			p[j]=tmp.second;
-			diff.erase({tmp.second,tmp.first});
-			diff.erase({tmp.first,tmp.second});
-		}
-	}
-	cout<<"Yes"<<endl;
-	rep(i,n){
-		rep(j,n){
-			cout<<a[p[i]][p[j]]<<" ";
-		}
-		cout<<endl;
-	}
+	return;
 }
 
 //メイン
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t)solve();	
 	return 0;
 }
