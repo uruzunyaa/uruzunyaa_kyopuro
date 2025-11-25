@@ -450,6 +450,51 @@ mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は
 
 //メイン
 int main(){
-	
+	ll n,m,x;
+	cin>>n>>m>>x;
+	vl ans(m,0);
+	//{-本来の到着時刻,新しい到着時刻}
+	vector<priority_queue<pair<ll,ll>>> haxnei(n);
+	//何分まで現在到着している物が遅延しているか。
+	vl delay(n,0);
+
+	vvl stabi;
+	rep(i,m){
+		ll a,b,s,t;
+		cin>>a>>b>>s>>t;
+		a--,b--;
+		vl tmp={s,t,a,b,i};
+		stabi.push_back(tmp);
+	}
+
+	haxnei[stabi[0][3]].push({-stabi[0][1],stabi[0][1]+x});
+
+	sort(stabi.begin(),stabi.end());
+
+	rep(z,m){
+		ll s=stabi[z][0];
+		ll t=stabi[z][1];
+		ll a=stabi[z][2];
+		ll b=stabi[z][3];
+		ll i=stabi[z][4];
+
+		//haxneiの中に反映させるべきものがあるなら反映する。
+		while(!haxnei[a].empty()&&-haxnei[a].top().first<=s){
+			delay[a]=max(delay[a],haxnei[a].top().second);
+			haxnei[a].pop();
+		}
+
+		//delay分より早い発車なら遅延させて行き先に遅延情報を流す
+		if(delay[a]<=s)continue;
+
+		ll nx=delay[a]-s;
+		ans[i]=nx;
+
+		haxnei[b].push({-t,t+nx});
+	}
+
+
+	ans.erase(ans.begin());
+	vdbg(ans);
 	return 0;
 }

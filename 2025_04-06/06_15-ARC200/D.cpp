@@ -452,9 +452,46 @@ struct SegTree{
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+void solve(){
+	ll m,k;
+	cin>>m>>k;
+	if(m==k){
+		cout<<"Yes"<<endl;
+		cout<<m<<endl;
+		rep(i,m)cout<<i<<" ";
+		cout<<endl;
+		return;
+	}
+	if(k>=5||k==3||k==1){
+		cout<<"Yes"<<endl;
+		cout<<(k+1)/2<<endl;
+		rep(i,(k-1)/2){
+			cout<<i<<" ";
+		}
+		cout<<k/2<<endl;
+		return;
+	}
+	if(k==2&&m%2==0){
+		cout<<"Yes"<<endl;
+		cout<<2<<endl;
+		cout<<"0 "<<m/2<<endl;
+		return;
+	}
+	if(k==4&&m%4==0){
+		cout<<"Yes"<<endl;
+		cout<<4<<endl;
+		rep(i,4)cout<<(m/4)*i<<" ";
+		cout<<endl;
+		return;
+	}
+	cout<<"No"<<endl;
+	return;
+}
 
 //メイン
 int main(){
-	
+	ll t;
+	cin>>t;
+	rep(i,t)solve();
 	return 0;
 }

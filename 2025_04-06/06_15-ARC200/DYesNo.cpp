@@ -1,30 +1,27 @@
-#include<iostream>//入出力
-#include<algorithm>//アルゴリズム
-#include<vector>//配列
-#include<string>//文字列
-#include<functional>//関数型変数
-#include<set>//セット
-#include<unordered_set>//ハッシュセット
-#include<map>//木構造マップ
-#include<unordered_map>//ハッシュマップ
-#include<queue>//キュー、優先度付きキュー
-#include<deque>//スタックとキュー
-#include<iomanip>//出力形式調整
-#include<tuple>//pairの複数型
-#include<cmath>//数学。ルートとか
-#include<cctype>//大文字小文字のチェックなど
-#include<fstream>//ファイル入出力
-#include<random>//乱数
+//#pragma GCC optimize("O3")
+#include<bits/stdc++.h>
 using namespace std;
-#define rep(i,n) for (long long i=0;i<n;i++)
-#define loop(i,m,n) for(long long i=m;i<=n;i++)
-#define range(value,range) for(const auto &value : range)
 #define ll long long
+#define rep(i,n) for (ll i=0;i<(ll)n;i++)
+#define rrep(i,n) for (ll i=n-1;i>=(ll)0;i--)
+#define loop(i,m,n) for(ll i=m;i<=(ll)n;i++)
+#define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
 #define vl vector<long long>
 #define vvl vector<vector<long long>>
+#define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
+#define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
+#define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
 #define inf 4000000000000000000LL
-#define mod 998244353
-//#define mod 1000000007
+#define mod 998244353LL
+#define eps 0.000000001
+//#define mod 1000000007LL
+random_device rnd;// 非決定的な乱数生成器
+mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
+
+//#include<boost/multiprecision/cpp_int.hpp>
+//#define bbi boost::multiprecision::cpp_int
+
+//#include<atcoder/lazysegtree>
 
 //√の値が整数かを調べる
 bool isSqrt(ll n) {
@@ -32,6 +29,7 @@ bool isSqrt(ll n) {
 	ll sqrtN = static_cast<ll>(sqrt(n));
 	return sqrtN * sqrtN == n;
 }
+
 //整数同士の累乗の計算をする。
 ll power(ll A, ll B) {
 	ll result = 1;
@@ -40,6 +38,7 @@ ll power(ll A, ll B) {
 	}
 	return result;
 }
+
 //素因数分解
 vector<ll> makePrime(ll n){
 	vector<ll> factors;
@@ -58,8 +57,28 @@ vector<ll> makePrime(ll n){
 	}
 	return factors;
 }
+
+//map形式で、nを素因数分解した値を返す
+map<ll,ll> makeMapPrime(ll n){
+	map<ll,ll> factors;
+	while (n % 2 == 0) {
+		factors[2]++;
+		n /= 2;
+	}
+	for (ll i=3; i*i<=n;i+=2) {
+		while (n%i == 0) {
+			factors[i]++;
+			n /= i;
+		}
+	}
+	if (n > 2) {
+		factors[n]++;
+	}
+	return factors;
+}
+
 // nのk乗をmodで割った余りを計算
-ll power_mod(ll n, ll k) {
+ll power_mod(ll n, ll k){
 	long long result = 1;
 	while (k > 0){
 		if ((k&1) ==1)result=(result*n)%mod;
@@ -68,8 +87,23 @@ ll power_mod(ll n, ll k) {
 	}
 	return result;
 }
+
+//mod mにおけるaの逆元を計算
+ll modinv(ll a, ll m) {
+	ll b = m, u = 1, v = 0;
+	while (b) {
+		ll t = a / b;
+		a -= t * b; swap(a, b);
+		u -= t * v; swap(u, v);
+	}
+	u %= m; 
+	if (u < 0) u += m;
+	return u;
+}
+
 //場合の数 nCr を求める
 ll ncr(ll n,ll r) {
+	if(n<r)return 0;
 	vvl dp(n+1,vl(r+1));
 	rep (i,n+1)dp[i][0] = 1;
 	rep (i,r+1)dp[i][i] = 1;
@@ -81,6 +115,7 @@ ll ncr(ll n,ll r) {
 	}
 	return dp[n][r];
 }
+
 //受け取った文字列を、第2引数が0なら全て小文字に、1なら大文字に変換する関数
 string cnvString(const string &str, int mode) {
 	string result = str;
@@ -97,6 +132,7 @@ string cnvString(const string &str, int mode) {
 	}
 	return result;
 }
+
 //第一引数で受け取った数を、第二引数で受け取った数の進数と見做して、第三引数の進数へ変換する。
 string cnvBase(const string &str, ll from_base, ll to_base) {
 	ll num = 0;
@@ -117,16 +153,19 @@ string cnvBase(const string &str, ll from_base, ll to_base) {
 	reverse(result.begin(), result.end());
 	return result.empty() ? "0" : result;
 }
+
 //底がaの対数xを計算。ただし小数点は繰り上げ。
 ll logax(ll a, ll x){
-	ll result = 0;
+	if(x<=1)return 0;
+	ll result = 1;
 	ll power = 1;
-	while (power < x){
+	while (power < (x+a-1) / a){
 		power *= a;
 		result++;
 	}
 	return result;
 }
+
 //第一引数を第二引数で割った余りを計算、割る数はint範囲
 ll bigmd(const string &num, int md) {
 	ll ans = 0;
@@ -145,6 +184,7 @@ ll bigmd(const string &num, int md) {
 	}
 	return ans;
 }
+
 //受け取った2次元文字の外側に、文字pをコーティングする。
 vector<string> pad(vector<string> &s,char p){
 	ll h=s.size();
@@ -153,6 +193,7 @@ vector<string> pad(vector<string> &s,char p){
 	rep(i,h)rep(j,w)res[i+1][j+1]=s[i][j];
 	return res;
 }
+
 //ax+by=cの整数解を得る ただし、cはgcd(a,b)の倍数でない場合、0,0になる
 pair<ll,ll> ex_euclid(ll a,ll b,ll c){
 	if(a<0||b<0||c<0){
@@ -183,6 +224,27 @@ pair<ll,ll> ex_euclid(ll a,ll b,ll c){
 	return ans;
 }
 
+//オイラーのトーシェント関数。N以下のNと互いに素な物の数を返す。
+ll euler(ll n){
+	unordered_map<ll,ll> factors;
+	ll tmp=n;
+	while (tmp % 2 == 0) {
+		factors[2]++;
+		tmp /= 2;
+	}
+	for (ll i=3; i*i<=tmp;i+=2) {
+		while (tmp%i == 0) {
+			factors[i]++;
+			tmp/= i;
+		}
+	}
+	if (tmp > 2)factors[tmp]++;
+	ll ans=1;
+	for(const auto & val:factors){
+		ans*=power(val.first,val.second-1)*(val.first-1);
+	}
+	return ans;
+}
 
 // Union-Find
 struct UnionFind {
@@ -211,6 +273,7 @@ struct UnionFind {
 		return siz[root(x)];
 	}
 };
+
 //重み付きUF
 struct PotentialUnionFind {
 	ll n;
@@ -272,6 +335,47 @@ struct PotentialUnionFind {
 		cout<<endl;
 		rep(i,n)cout<<setw(4)<<left<<pot[i]<<" ";
 		cout<<endl;
+	}
+};
+
+//分離可能UnionFind、経路圧縮をしない。
+struct CuttingFind{
+	vector<int> par, siz;
+	CuttingFind(int n) : par(n, -1) , siz(n, 1) { }
+	// 根を求める
+	int root(int x) {
+		if (par[x] == -1) return x;
+		else return root(par[x]);
+	}
+	// x と y が同じグループに属するかどうか (根が一致するかどうか)
+	bool issame(int x, int y) {
+		return root(x) == root(y);
+	}
+	//根x と 根y のグループを併合する(お互い根ではない時、falseで何もしない)
+	bool unite(int x, int y) {
+		if (issame(x,y) || par[x] != -1 || par[y] != -1) {
+			cout<<"error"<<endl;
+			return false;
+		}
+		if (siz[x] < siz[y]) swap(x, y);
+		par[y] = x;
+		siz[x] += siz[y];
+		return true;
+	}
+	//根の側から、その直系の子供を分離する。片方が根でもう片方が直系の子でなければならない。
+	bool separate(int x,int y){
+		if(par[y]==-1)swap(x,y);
+		if(par[y]!=x||par[x]!=-1){
+			cout<<"error2"<<endl;
+			return false;
+		}
+		siz[x] -= siz[y];
+		par[y]=-1;
+		return true;
+	}
+	// x を含むグループのサイズを求める
+	int size(int x) {
+		return siz[root(x)];
 	}
 };
 //セグ木,乗せる値の型が必要
@@ -348,14 +452,29 @@ struct SegTree{
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-//乱数、ファイル入出力
-random_device rnd;// 非決定的な乱数生成器
-mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
-ifstream fin("./DefaultFile");
-ofstream fout("./DefaultOutFile");//出力する場合の出力先を指定
+void solve(){
+	ll m,k;
+	cin>>m>>k;
+	if(k>=5||k==3||k==1){
+		cout<<"Yes"<<endl;
+		return;
+	}
+	if(k==2&&m%2==0){
+		cout<<"Yes"<<endl;
+		return;
+	}
+	if(k==4&&m%4==0){
+		cout<<"Yes"<<endl;
+		return;
+	}
+	cout<<"No"<<endl;
+	return;
+}
 
 //メイン
 int main(){
-	
+	ll t;
+	cin>>t;
+	rep(i,t)solve();
 	return 0;
 }

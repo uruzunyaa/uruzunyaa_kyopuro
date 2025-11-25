@@ -448,8 +448,65 @@ vl dy={0,1,0,-1};
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
+//LISを求める(狭義単調増加)
+ll get_lis(vl a){
+	ll ans=0;
+	vl dp(a.size()+1,inf);
+	dp[0]=-inf;
+	rep(i,a.size()){
+		auto it=upper_bound(dp.begin(),dp.end(),a[i]);
+		*it=a[i];
+		ans=max(ans,(ll)(it-dp.begin()));
+	}
+	return ans;
+}
+
 //メイン
 int main(){
+	ll n,x;
+	cin>>n>>x;
+	x--;
+	vl a(n),b(n),p(n),q(n);
+	ll asum=0,bsum=0;
+	rep(i,n)cin>>a[i],asum+=a[i];
+	rep(i,n)cin>>b[i],bsum+=b[i];
+	rep(i,n)cin>>p[i],p[i]--;
+	rep(i,n)cin>>q[i],q[i]--;
+
+	vl alist,blist;
 	
+	ll node=p[x];
+	while(node!=x&&a[node]==0)node=p[node];
+	while(node!=x){
+		alist.push_back(node);
+		asum-=a[node];
+		node=p[node];
+	}
+	
+	node=q[x];
+	while(node!=x&&b[node]==0)node=q[node];
+	while(node!=x){
+		blist.push_back(node);
+		bsum-=b[node];
+		node=q[node];
+	}
+
+	if(a[x]==1)asum--;
+	if(b[x]==1)bsum--;
+	if(asum!=0||bsum!=0){
+		cout<<-1<<endl;
+		return 0;
+	}
+
+	vl lis_tmp;
+	vl ind(n,inf);
+	rep(i,alist.size()){
+		ind[alist[i]]=i;
+	}
+	rep(i,blist.size()){
+		if(ind[blist[i]]==inf)continue;
+		lis_tmp.push_back(ind[blist[i]]);
+	}
+	cout<<alist.size()+blist.size()-get_lis(lis_tmp)<<endl;
 	return 0;
 }

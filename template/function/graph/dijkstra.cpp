@@ -16,11 +16,12 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 //グラフgの頂点startからの最短経路を全ての頂点に対して求める。
+//{行き先,コスト}
 vl dijkstra(vector<vector<pair<ll,ll>>> g,ll start){
 	priority_queue<pair<ll,ll>> dj;
 	vl cost(g.size(),inf);
 	cost[start]=0;
-	dj.push({start,0});
+	dj.push({0,start});
 	while(!dj.empty()){
 		ll nowcost=-dj.top().first;
 		ll tmp=dj.top().second;

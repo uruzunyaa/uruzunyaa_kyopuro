@@ -19,10 +19,6 @@ using namespace std;
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
-//#include<boost/multiprecision/cpp_int.hpp>
-//#define bbi boost::multiprecision::cpp_int
-//#include<atcoder/lazysegtree>
-
 
 //整数同士の累乗の計算をする。
 ll power(ll A, ll B) {
@@ -33,63 +29,128 @@ ll power(ll A, ll B) {
 	return result;
 }
 
-// nのk乗をmodで割った余りを計算
-ll power_mod(ll n, ll k){
-	long long result = 1;
-	while (k > 0){
-		if ((k&1) ==1)result=(result*n)%mod;
-		n=n*n%mod;
-		k >>= 1;
+//底がaの対数xを計算。ただし小数点は繰り上げ。
+ll logax(ll a, ll x){
+	if(x<=1)return 0;
+	ll result = 1;
+	ll power = 1;
+	while (power < (x+a-1) / a){
+		power *= a;
+		result++;
 	}
 	return result;
 }
 
-
-//受け取った2次元文字の外側に、文字pをコーティングする。
-vector<string> pad(vector<string> &s,char p){
-	ll h=s.size();
-	ll w=s[0].size();
-	vector<string> res(h+2,string(w+2,p));
-	rep(i,h)rep(j,w)res[i+1][j+1]=s[i][j];
-	return res;
-}
-
-// Union-Find
-struct UnionFind {
-	vector<int> par, siz;
-	UnionFind(int n) : par(n, -1) , siz(n, 1) { }
-	// 根を求める
-	int root(int x) {
-		if (par[x] == -1) return x;
-		else return par[x] = root(par[x]);
+//powerとlogが前提条件
+//セグ木,乗せる値の型が必要
+template<typename T>
+struct SegTree{
+	ll size;
+	ll tall;
+	vector<T> data;
+	function<T(T,T)> p;
+	//セグ木に乗せる値の初期値をa配列にし、putの関数をセグ木に乗せる、dをデフォルト値に。
+	SegTree(vector<T> a,function<T(T,T)> put,T d) : data(power(2,logax(2,a.size())+1)) {
+		size = data.size()/2;
+		tall=logax(2,size)+1;
+		p=put;
+		ll tmp=size;
+		data = vector<T>(size*2,d);
+		while(tmp!=0){
+			if(tmp==size)rep(i,a.size())data[tmp+i]=a[i];
+			else rep(i,tmp) data[tmp+i]=p(data[2*(tmp+i)],data[2*(tmp+i)+1]);
+			tmp/=2;
+		}
 	}
-	// x と y が同じグループに属するかどうか (根が一致するかどうか)
-	bool issame(int x, int y) {
-		return root(x) == root(y);
+	//更新、t番目の値をxにする。
+	void update(ll t,T x){
+		t+=size;
+		while(t!=0){
+			if(t>=size)data[t]=x;
+			else data[t]=p(data[2*t],data[2*t+1]);
+			t/=2;
+		}
 	}
-	// x を含むグループと y を含むグループとを併合する
-	bool unite(int x, int y) {
-		x = root(x), y = root(y);
-		if (x == y) return false; 
-		if (siz[x] < siz[y]) swap(x, y);
-		par[y] = x;
-		siz[x] += siz[y];
-		return true;
-	}
-	// x を含むグループのサイズ
-	int size(int x) {
-		return siz[root(x)];
+	//取得、l~r区間内の評価値を取得する。
+	T get(ll l,ll r){
+		//lとrが範囲外なら範囲内に正す
+		l=max(0LL,l);
+		r=min(r,size-1);
+		r++;
+		T ans=data[0];
+		ll pos=l+size;
+		ll wid=1;
+		//出来る限り上に上げきる。
+		while(l+(wid*2)<=r){
+			while(l%(wid*2)==0&&l+(wid*2)<=r)pos/=2,wid*=2;
+			ans=p(ans,data[pos]);
+			pos++;
+			l+=wid;
+		}
+		//上げ終わったので今度は下げる
+		while(l!=r){
+			while(l+wid>r)pos*=2,wid/=2;
+			ans=p(ans,data[pos]);
+			pos++;
+			l+=wid;
+		}
+		return ans;
 	}
 };
-
 
 //グリッド問題等用
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+ll mx(ll a,ll b){return max(a,b);}
 
 //メイン
 int main(){
+	ll n;
+	cin>>n;
+	vl mae(30,-inf);
+	vvl g;
+	vl v(n+1,-inf);
+	v[0]=0;
+	SegTree<ll> dp(v,mx,-inf);
 	
+	rep(i,n){
+		ll a;
+		cin>>a;
+		rep(b,30){
+			if(a&(1LL<<b))mae[b]=i;
+		}
+
+		vector<pair<ll,ll>> tmp;
+		rep(j,30){
+			if(mae[j]!=-inf)tmp.push_back({mae[j],j});
+		}
+		sort(tmp.begin(),tmp.end());
+		ll r=i;
+		ll num=0;
+		while(tmp.size()!=0){
+			ll l=tmp.back().first;
+			if(l<=r)g.push_back({num,i+1,l+1,r});
+			while(tmp.size()!=0&&tmp.back().first==l){
+				num+=(1LL<<tmp.back().second);
+				tmp.pop_back();
+			}
+			
+			r=l;
+		}
+		g.push_back({num,i+1,0,r});
+	}
+	sort(g.begin(),g.end());
+
+	rep(i,g.size()){
+		//{コスト,遷移先,l,r}
+
+		ll l=g[i][2];
+		ll r=g[i][3];
+		ll t=g[i][1];
+		ll cost=max(dp.get(l,r)+1,dp.get(t,t));
+		dp.update(t,cost);
+	}
+	cout<<dp.get(n,n)<<endl;
 	return 0;
 }
