@@ -51,3 +51,16 @@ vector<T> hakidasi(vector<vector<T>> a){
 	}
 	return ans;
 }
+
+int main(){
+	ll n;
+	cin>>n;
+	vector<vector<double>> mt(n,vector<double>(n+1));
+	rep(i,n){
+		rep(j,n+1){
+			cin>>mt[i][j];
+		}
+	}
+	vector<double> ans=hakidasi(mt);
+	rep(i,n)cout<<ans[i]<<endl;
+}

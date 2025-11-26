@@ -18,66 +18,47 @@ using namespace std;
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
-//xor基底を管理し、何番目の要素由来かを管理する。
+//xor基底を求める、確認する。
 struct XorBasis {
 	//基底のリスト
     vl basis;
-	//基底のリストの構成方法
-    vvl used;
-	//基底外のリストの構成方法
-	vvl flip;
-	//全体サイズの最大値
-    int n;
 
-    XorBasis(int n_) : n(n_) {}
-
-    void add(ll x, const vl& bits) {
-        vl tmp = bits;
-        for (int i = 0; i < (int)basis.size(); ++i) {
-            if ((x ^ basis[i]) < x) {
-                x ^= basis[i];
-                for (int j = 0; j < n; ++j) tmp[j] ^= used[i][j]; 
-            }
+	//xを追加
+    void add(ll x) {
+        for (auto b : basis) {
+            x=min(x,x^b);
         }
         if (x != 0) {
             basis.push_back(x);
-            used.push_back(tmp);
-        }else{
-			flip.push_back(tmp);
 		}
     }
 
-    pair<bool, vl> represent(ll x) const {
-        vl res(n, 0);
-        for (int i = 0; i < (int)basis.size(); ++i) {
-            if ((x ^ basis[i]) < x) {
-                x ^= basis[i];
-                for (int j = 0; j < n; ++j) res[j] ^= used[i][j];
-            }
+    //xが含まれているか確認
+	bool check(ll x){
+       for (auto b : basis) {
+            x=min(x,x^b);
         }
-        return {x == 0, res};
+        return x==0;
     }
 };
 
 
 int main(){
-	vl A = {3, 5, 7, 9};
+	vl A = {3, 5, 6, 9};
     int n = A.size();
 
-    XorBasis xb(n);
+    XorBasis xb;
 
-	//i番目の要素を使用中にして、構成に追加してみる。
+	//要素を追加。
     for (int i = 0; i < n; ++i) {
-		vl tmp(n,0);
-		tmp[i]=1;
-        xb.add(A[i], tmp);
+        xb.add(A[i]);
     }
 
-	//値kの構成方法を知る。
-	ll k= 15;
-	auto [b,v]=xb.represent(k);
+	//値kが作れるかチェック。
+	ll k= 1;
+	auto b=xb.check(k);
 	if(b){
-		vdbg(v);
+		cout<<"ok"<<endl;
 	}else{
 		cout<<"muri"<<endl;
 	}
