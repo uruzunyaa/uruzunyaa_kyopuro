@@ -176,10 +176,10 @@ bool check(ll sum){
 
 //メイン
 int main(){
-	vl v={1,0,0,1};
+	vl v={1,0,0,1,2,6,1,1};
 	SegTree<ll> seg(v,sum,0);
-	nowk=1;
-	ll tmp=seg.min_left(0,check);
+	nowk=8;
+	ll tmp=seg.min_left(6,check);
 	cout<<tmp<<endl;
 	return 0;
 }

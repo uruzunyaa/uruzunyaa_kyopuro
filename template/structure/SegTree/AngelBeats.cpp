@@ -8,16 +8,6 @@ using namespace std;
 #define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
 #define vl vector<ll>
 #define vvl vector<vector<ll>>
-#define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
-#define vpdbg(a) rep(ii,a.size()){cout<<"{"<<a[ii].first<<","<<a[ii].second<<"} ";}cout<<endl;
-#define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
-#define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
-#define inf 4000000000000000000LL
-#define mod 998244353LL
-//#define mod 1000000007LL
-#define eps 0.000000001
-random_device rnd;// 非決定的な乱数生成器
-mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
 
 /*
@@ -31,36 +21,35 @@ ll range_sum(int l, int r) {区間和を取得}
 */
 
 struct AngelBeats {
-  using i64 = long long;
-  static constexpr i64 INF = numeric_limits<i64>::max() / 2.1;
+  static constexpr ll INF = numeric_limits<ll>::max() / 2.1;
 
   struct alignas(32) Node {
-    i64 sum = 0, g1 = 0, l1 = 0;
-    i64 g2 = -INF, gc = 1, l2 = INF, lc = 1, add = 0;
+    ll sum = 0, g1 = 0, l1 = 0;
+    ll g2 = -INF, gc = 1, l2 = INF, lc = 1, add = 0;
   };
 
   vector<Node> v;
-  i64 n, log;
+  ll n, log;
 
   AngelBeats() {}
-  AngelBeats(int _n) : AngelBeats(vector<i64>(_n)) {}
-  AngelBeats(const vector<i64>& vc) {
+  AngelBeats(int _n) : AngelBeats(vector<ll>(_n)) {}
+  AngelBeats(const vector<ll>& vc) {
     n = 1, log = 0;
     while (n < (int)vc.size()) n <<= 1, log++;
     v.resize(2 * n);
-    for (i64 i = 0; i < (int)vc.size(); ++i) {
+    for (ll i = 0; i < (int)vc.size(); ++i) {
       v[i + n].sum = v[i + n].g1 = v[i + n].l1 = vc[i];
     }
-    for (i64 i = n - 1; i; --i) update(i);
+    for (ll i = n - 1; i; --i) update(i);
   }
 
-  void range_chmin(int l, int r, i64 x) { inner_apply<1>(l, r, x); }
-  void range_chmax(int l, int r, i64 x) { inner_apply<2>(l, r, x); }
-  void range_add(int l, int r, i64 x) { inner_apply<3>(l, r, x); }
-  void range_update(int l, int r, i64 x) { inner_apply<4>(l, r, x); }
-  i64 range_min(int l, int r) { return inner_fold<1>(l, r); }
-  i64 range_max(int l, int r) { return inner_fold<2>(l, r); }
-  i64 range_sum(int l, int r) { return inner_fold<3>(l, r); }
+  void range_chmin(int l, int r, ll x) { inner_apply<1>(l, r, x); }
+  void range_chmax(int l, int r, ll x) { inner_apply<2>(l, r, x); }
+  void range_add(int l, int r, ll x) { inner_apply<3>(l, r, x); }
+  void range_update(int l, int r, ll x) { inner_apply<4>(l, r, x); }
+  ll range_min(int l, int r) { return inner_fold<1>(l, r); }
+  ll range_max(int l, int r) { return inner_fold<2>(l, r); }
+  ll range_sum(int l, int r) { return inner_fold<3>(l, r); }
 
  private:
   void update(int k) {
@@ -93,7 +82,7 @@ struct AngelBeats {
     }
   }
 
-  void push_add(int k, i64 x) {
+  void push_add(int k, ll x) {
     Node& p = v[k];
     p.sum += x << (log + __builtin_clz(k) - 31);
     p.g1 += x;
@@ -102,14 +91,14 @@ struct AngelBeats {
     if (p.l2 != INF) p.l2 += x;
     p.add += x;
   }
-  void push_min(int k, i64 x) {
+  void push_min(int k, ll x) {
     Node& p = v[k];
     p.sum += (x - p.g1) * p.gc;
     if (p.l1 == p.g1) p.l1 = x;
     if (p.l2 == p.g1) p.l2 = x;
     p.g1 = x;
   }
-  void push_max(int k, i64 x) {
+  void push_max(int k, ll x) {
     Node& p = v[k];
     p.sum += (x - p.l1) * p.lc;
     if (p.g1 == p.l1) p.g1 = x;
@@ -130,7 +119,7 @@ struct AngelBeats {
     if (p.l1 > v[k * 2 + 1].l1) push_max(k * 2 + 1, p.l1);
   }
 
-  void subtree_chmin(int k, i64 x) {
+  void subtree_chmin(int k, ll x) {
     if (v[k].g1 <= x) return;
     if (v[k].g2 < x) {
       push_min(k, x);
@@ -142,7 +131,7 @@ struct AngelBeats {
     update(k);
   }
 
-  void subtree_chmax(int k, i64 x) {
+  void subtree_chmax(int k, ll x) {
     if (x <= v[k].l1) return;
     if (x < v[k].l2) {
       push_max(k, x);
@@ -155,7 +144,7 @@ struct AngelBeats {
   }
 
   template <int cmd>
-  inline void _apply(int k, i64 x) {
+  inline void _apply(int k, ll x) {
     if constexpr (cmd == 1) subtree_chmin(k, x);
     if constexpr (cmd == 2) subtree_chmax(k, x);
     if constexpr (cmd == 3) push_add(k, x);
@@ -163,7 +152,7 @@ struct AngelBeats {
   }
 
   template <int cmd>
-  void inner_apply(int l, int r, i64 x) {
+  void inner_apply(int l, int r, ll x) {
     if (l == r) return;
     l += n, r += n;
     for (int i = log; i >= 1; i--) {
@@ -188,28 +177,28 @@ struct AngelBeats {
   }
 
   template <int cmd>
-  inline i64 e() {
+  inline ll e() {
     if constexpr (cmd == 1) return INF;
     if constexpr (cmd == 2) return -INF;
     return 0;
   }
 
   template <int cmd>
-  inline void op(i64& a, const Node& b) {
+  inline void op(ll& a, const Node& b) {
     if constexpr (cmd == 1) a = min(a, b.l1);
     if constexpr (cmd == 2) a = max(a, b.g1);
     if constexpr (cmd == 3) a += b.sum;
   }
 
   template <int cmd>
-  i64 inner_fold(int l, int r) {
+  ll inner_fold(int l, int r) {
     if (l == r) return e<cmd>();
     l += n, r += n;
     for (int i = log; i >= 1; i--) {
       if (((l >> i) << i) != l) push(l >> i);
       if (((r >> i) << i) != r) push((r - 1) >> i);
     }
-    i64 lx = e<cmd>(), rx = e<cmd>();
+    ll lx = e<cmd>(), rx = e<cmd>();
     while (l < r) {
       if (l & 1) op<cmd>(lx, v[l++]);
       if (r & 1) op<cmd>(rx, v[--r]);
@@ -227,22 +216,8 @@ struct AngelBeats {
 
 //メイン
 int main(){
-	ll n;
-	cin>>n;
-	vl a(n);
-	rep(i,n)cin>>a[i];
+	vl a={3,1,4,1,5};
 	AngelBeats bt(a);
-	ll q;
-	cin>>q;
-	while(q--){
-		ll l,r,x;
-		cin>>l>>r>>x;
-		l--;
-		ll ans=bt.range_sum(l,r);
-		bt.range_add(l,r,-x);
-		bt.range_chmax(l,r,0);
-		ans-=bt.range_sum(l,r);
-		cout<<ans<<endl;
-	}
+	
 	return 0;
 }

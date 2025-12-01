@@ -15,6 +15,7 @@ vector<string> gridTurn(vector<string> &s){
 	rep(i,h)rep(j,w){
 		res[i][j]=s[w-j-1][i];
 	}
+
 	return res;
 }
 

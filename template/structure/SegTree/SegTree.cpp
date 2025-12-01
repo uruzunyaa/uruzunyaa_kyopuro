@@ -29,6 +29,7 @@ ll logax(ll a, ll x){
 
 //powerとlogが前提条件
 //セグ木,乗せる値の型が必要
+//max_rightやmin_left使用時には2の累乗に拡張されている事に注意
 template<typename T>
 struct SegTree{
 	ll size;
@@ -82,9 +83,102 @@ struct SegTree{
 		}
 		return ans;
 	}
+	// ここから任意
+
+	// [l, r] (両端含む) で cond(get(l, r)) が true となる最大の r を返す
+	// cond は「区間の集約値 -> bool」
+	// 見つからなければ l-1 を返す
+	ll max_right(ll l, function<bool(T)> cond){
+		if (l < 0) l = 0;
+		if (l >= size) return size - 1;
+		T sm = data[0];
+		ll i = l + size; 
+		do {
+			while ((i & 1) == 0) i >>= 1;
+			if (!cond(p(sm, data[i]))) {
+				while (i < size) {
+					i <<= 1;
+					if (cond(p(sm, data[i]))) {
+						sm = p(sm, data[i]);
+						i++;
+					}
+				}
+				return i - size - 1;
+			}
+			sm = p(sm, data[i]);
+			i++;
+		} while ((i & -i) != i);
+		return size - 1;
+	}
+
+
+	// [l, r] (両端含む) で cond(get(l, r)) が true となる最小の l を返す
+	// 見つからなければ r+1 を返す
+	ll min_left(ll r, function<bool(T)> cond){
+		if (r < 0) return 0;
+		if (r >= size) r = size - 1;
+		T sm = data[0];               // 単位元
+		ll i = r + 1 + size;          // ACLは [l, r) なので r+1 から始める
+
+		do {
+			i--;                      // まず一つ左へ
+			while (i > 1 && (i & 1)) i >>= 1;  // 右子を抜けて親に上がる
+			if (!cond(p(data[i], sm))) {
+				// ここから下に降りてちょうど壊れる左端を探す
+				while (i < size) {
+					i = i * 2 + 1;    // 右子へ
+					if (cond(p(data[i], sm))) {
+						sm = p(data[i], sm);
+						i--;          // 左兄弟へ
+					}
+				}
+				return i + 1 - size;
+			}
+			sm = p(data[i], sm);
+		} while ((i & -i) != i);
+
+		return 0;
+	}
 };
 
-int main(){
+ll mx(ll a,ll b){
+	return max(a,b);
+}
+ll checker;
+bool check(ll a){
+	return (a<checker);
+}
 
+//使用例ACLContestSegTree
+int main(){
+	ll n,q;
+	cin>>n>>q;
+	vl a(n);
+	rep(i,n)cin>>a[i];
+	SegTree<ll> seg(a,mx,0);
+
+	while(q--){
+		ll t;
+		cin>>t;
+		if(t==1){
+			ll x,v;
+			cin>>x>>v;
+			x--;
+			seg.update(x,v);
+		}else if(t==2){
+			ll l,r;
+			cin>>l>>r;
+			l--,r--;
+			cout<<seg.get(l,r)<<endl;
+		}else{
+			ll x,v;
+			cin>>x>>v;
+			x--;
+			checker=v;
+			ll tmp=seg.max_right(x,check)+2;
+			tmp=min(tmp,n+1);
+			cout<<tmp<<endl;
+		}
+	}
 	return 0;
 }

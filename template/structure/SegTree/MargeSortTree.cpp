@@ -97,42 +97,29 @@ struct MergeSortTree {
 
 //出来る事、数列A_l~A_rの中で、値がx以下の要素の合計を log^2(n)で求めれる。 
 
-//使用例PGWSC001-Ex
+//使用例ABC339-G
 int main(){
-	//入力
 	ll n;
 	cin>>n;
-	vector<pair<ll,ll>> xy(n);
-	rep(i,n)cin>>xy[i].first>>xy[i].second;
-	
-	//点をx座標順にソート
-	sort(xy.begin(),xy.end());
-	vector<vector<pair<ll,ll>>> x(n);
+	vl a(n);
+	rep(i,n)cin>>a[i];
 
-	//y座標を乗せたマージソートツリーを構築
-	rep(i,n)x[i].push_back(make_pair(xy[i].second,xy[i].second));
-	MergeSortTree mst(x);
+	vector<vector<pair<ll,ll>>> v(n);
+	rep(i,n)v[i].push_back({a[i],a[i]});
+	MergeSortTree mst(v);
 
 	ll q;
 	cin>>q;
-	cout<<fixed<<setprecision(15);
-	rep(z,q){
-		ll a,b,c,d;
-		cin>>a>>b>>c>>d,a--,b--;
-		//x座標
-		ll l=upper_bound(xy.begin(),xy.end(),make_pair(a,inf))-xy.begin();
-		ll r=upper_bound(xy.begin(),xy.end(),make_pair(c,inf))-xy.begin()-1;
-
-		//y座標合計と個数を取得
-		pair<ll,ll> up,down;
-		up=mst.get(l,r,d);
-		down=mst.get(l,r,b);
-		if(up.second-down.second==0){
-			cout<<"NoPoint"<<endl;
-		}else{
-			double avey=(double)(up.first-down.first)/(up.second-down.second);
-			cout<<avey<<endl;
-		}
+	ll ans=0;
+	while(q--){
+		ll l,r,x;
+		cin>>l>>r>>x;
+		l^=ans;
+		r^=ans;
+		x^=ans;
+		l--,r--;
+		ans=mst.get(l,r,x).first;
+		cout<<ans<<endl;
 	}
 	return 0;
 }
