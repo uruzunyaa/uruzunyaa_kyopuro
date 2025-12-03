@@ -7,13 +7,15 @@ using namespace std;
 #define vvl vector<vector<long long>>
 #define inf 4000000000000000000LL
 #define eps 0.000000001
+#define circlepi 3.14159265358979323846
 
 struct point {
     double x,y;
 };
 
-//点1から点Nまで(NはPの長さ)の順に多角形を書いた時の面積を求める。
+//点1から点Nまで(NはPの長さ)の順に多角形を書いた時の重み付き面積を求める。
 //辺同士に交点はない事を前提とする。
+//反時計周りの時に正、時計回りの時に負となる。
 double area(vector<point> p){
     int n = p.size();
     double res = 0.0;
@@ -21,7 +23,12 @@ double area(vector<point> p){
         res += p[i].x * p[(i+1)%n].y;
         res -= p[i].y * p[(i+1)%n].x;
     }
-    return fabs(res) * 0.5;
+	res*=0.5;
+
+	//時計回りの面積も正にしたい時はこの下のコメントを外す
+	//res=fabs(res);
+    
+	return res;
 }
 
 

@@ -7,7 +7,7 @@ using namespace std;
 #define vvl vector<vector<long long>>
 #define inf 4000000000000000000LL
 #define eps 0.000000001
-
+#define circlepi 3.14159265358979323846
 
 struct point {
 	double x,y;
@@ -15,6 +15,7 @@ struct point {
 
 //円cと直線l1-l2の交点2つをpairで返す。
 //接している場合同値が2つ,交点を持たない場合{{inf,inf},{inf,inf}}が返る。
+//l1→l2ベクトルとfirst→secondベクトルの向きが一致するように返る
 pair<point, point> circle_line_cross(point cp, double cr,point l1, point l2){
     // 直線ベクトル
     double dx = l2.x - l1.x;
@@ -43,11 +44,12 @@ pair<point, point> circle_line_cross(point cp, double cr,point l1, point l2){
     // 交点までの距離
     double len = sqrt(max(0.0, cr * cr - d * d));
     // 直線方向にlen進んだ両側
-    double dxu = dx / hypot(dx, dy);
-    double dyu = dy / hypot(dx, dy);
+    double lenv = hypot(dx, dy);
+	double dxu = dx / lenv;
+	double dyu = dy / lenv;
 
-    point i1 = { px + dxu * len, py + dyu * len };
-    point i2 = { px - dxu * len, py - dyu * len };
+	point i1 = { px - dxu * len, py - dyu * len };
+    point i2 = { px + dxu * len, py + dyu * len };
     return { i1, i2 };
 }
 

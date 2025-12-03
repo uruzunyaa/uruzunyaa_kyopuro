@@ -7,6 +7,7 @@ using namespace std;
 #define vvl vector<vector<long long>>
 #define inf 4000000000000000000LL
 #define eps 0.000000001
+#define circlepi 3.14159265358979323846
 
 //2つの円の交点
 struct point {

@@ -7,7 +7,7 @@ using namespace std;
 #define vvl vector<vector<long long>>
 
 //mod mにおけるaの逆元を計算
-ll invMod(ll a, ll m) {
+ll invmd(ll a, ll m) {
 	ll b = m, u = 1, v = 0;
 	while (b) {
 		ll t = a / b;

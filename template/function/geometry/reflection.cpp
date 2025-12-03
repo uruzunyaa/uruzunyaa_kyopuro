@@ -7,11 +7,12 @@ using namespace std;
 #define vvl vector<vector<long long>>
 #define inf 4000000000000000000LL
 #define eps 0.000000001
+#define circlepi 3.14159265358979323846
 
 struct point {
 	double x,y;
 };
-//線対象な点を求める。
+//直線P1P2に対して、点Pの線対象な点を求める。
 point reflection(const point &P1, const point &P2, const point &P) {
     // 1) 方向ベクトル d = P2 - P1
     double dx = P2.x - P1.x;

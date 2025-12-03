@@ -1,11 +1,52 @@
+//#pragma GCC optimize("O3")
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
-#define rep(i,n) for (long long i=0;i<(ll)n;i++)
-#define loop(i,m,n) for(long long i=m;i<=(ll)n;i++)
-#define vl vector<long long>
-#define vvl vector<vector<long long>>
+#define rep(i,n) for (ll i=0;i<(ll)n;i++)
+#define rrep(i,n) for (ll i=(n)-1;i>=(ll)0;i--)
+#define loop(i,m,n) for(ll i=m;i<=(ll)n;i++)
+#define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
+#define vl vector<ll>
+#define vvl vector<vector<ll>>
+#define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
+#define vpdbg(a) rep(ii,a.size()){cout<<"{"<<a[ii].first<<","<<a[ii].second<<"} ";}cout<<endl;
+#define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
+#define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
+#define inf 4000000000000000000LL
+#define mod 998244353LL
+//#define mod 1000000007LL
+#define eps 0.000000001
+random_device rnd;// 非決定的な乱数生成器
+mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
+
+#include"atcoder/lazysegtree.hpp"
+
+struct S{
+	ll mx,cnt;
+};
+using F = long long;
+
+const S mINF = {-inf,1};
+
+S op(S a, S b){
+	if(a.mx<b.mx){
+		return b;
+	}
+	if(a.mx>b.mx){
+		return a;
+	}
+	S res={a.mx,a.cnt+b.cnt};
+	return res;
+}
+S e(){return mINF;}
+S mapping(F f, S x){
+	S res=x;
+	res.mx+=f;
+	return res;
+}
+F composition(F f, F g){return f+g;}
+F id(){return 0;}
 
 // Interval Set
 // T: type of range, VAL: data type
@@ -170,34 +211,38 @@ template<class T = ll, class VAL = ll> struct IntervalSet {
         }
     }
 };
-
-
 int main() {
-    // デフォルト値を渡して作成
-    IntervalSet iset(1);
-
-	//変更時に何もイジリたくない場合に渡す関数テンプレート
-	//addfuncやerasefuncに渡せばただの変更クエリとして機能する
-    auto nonefunc = [&](ll l, ll r, ll v) {
-		//削除や追加時に操作したい場合はここに操作を記述
-	};
-
-	// [l, r) を 値x に変更し、その過程で追加する区間と削除する区間に対して行う処理
-    //iset.update(l, r, x, addfunc,erasefunc);
+    ll n,q;
+    cin >> n>>q;
+    std::vector<S> v(n,{0,1});
+    atcoder::lazy_segtree<S, op, e, F, mapping, composition, id> seg(v);
 	
-	// [l, r) を削除し、その過程で追加する区間と削除する区間に対して行う処理
-	//iset.erase(l, r, addfunc, erasefunc);
+	vector<IntervalSet<>> st(60,IntervalSet<>(0));
 
-	//isetのイテレーターは、it->l 、it->r 、it->val でアクセス可能
+    auto add = [&](int l, int r, ll val) -> void {
+        seg.apply(l,r,val);
+    };
+    auto del = [&](int l, int r, long long val) -> void {
+       seg.apply(l,r,-val);
+    };
 
-	//pが含まれてる区間のイテレーターを返す、ない場合iset.end()になる。
-	//auto it =iset.get(p);
-	
-	//p以上の値を含む区間の最小イテレーターを返す、ない場合iset.end()になる。
-	//auto it2 = iset.lower_bound(p);
-
-	//pの値を取得する。pが何の区間にも属さない場合デフォルト値が返る。
-	//iset.get_val(p);
-	
-    return 0;
+    while (q--) {
+  		ll t,l,r;
+  		cin>>t>>l>>r;
+  		l--;
+  		if(t==1){
+  			ll x;
+  			cin>>x;
+  			x--;
+  			st[x].update(l,r,1,add,del);
+  		}else if(t==2){
+  			ll x;
+  			cin>>x;
+  			x--;
+  			st[x].erase(l,r,add,del);
+  		}else{
+  			S tmp=seg.prod(l,r);
+  			cout<<tmp.mx<<" "<<tmp.cnt<<endl;
+  		}
+    }
 }
