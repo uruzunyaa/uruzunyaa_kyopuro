@@ -8,10 +8,6 @@ using namespace std;
 #define inf 4000000000000000000LL
 #define mod 998244353LL
 
-//グリッド問題等用
-vl dx={1,0,-1,0};
-vl dy={0,1,0,-1};
-
 //グラフgの頂点startからの最短経路を全ての頂点に対して求める。
 //到達不可負はinf,経路上に負閉路があれば-inf
 //pairの順序は{行き先,コスト}
@@ -66,18 +62,5 @@ vl bellman_ford(vector<vector<pair<ll,ll>>> &g, ll start){
 }
 
 int main(){
-	ll n,m;
-	cin>>n>>m;
-	
-	vector<vector<pair<ll,ll>>> g(n);
-	rep(i,m){
-		ll a,b,c;
-		cin>>a>>b>>c;
-		a--,b--;
-		g[a].push_back({b,c});
-	}
-
-	vl ans=bellman_ford(g,0);
-	rep(i,n)cout<<ans[i]<<endl;
 	return 0;
 }
