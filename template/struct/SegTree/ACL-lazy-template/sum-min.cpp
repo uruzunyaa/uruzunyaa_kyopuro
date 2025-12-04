@@ -9,8 +9,6 @@ using namespace std;
 #define mod 998244353LL
 //#define mod 1000000007LL
 
-#include"atcoder/lazysegtree.hpp"
-
 using S = long long;
 using F = long long;
 
