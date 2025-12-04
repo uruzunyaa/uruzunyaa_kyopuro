@@ -3,12 +3,11 @@
 using namespace std;
 #define ll long long
 #define rep(i,n) for (ll i=0;i<(ll)n;i++)
-#define rrep(i,n) for (ll i=(n)-1;i>=(ll)0;i--)
+#define rrep(i,n) for (ll i=n-1;i>=(ll)0;i--)
 #define loop(i,m,n) for(ll i=m;i<=(ll)n;i++)
 #define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
-#define vl vector<ll>
-#define vvl vector<vl>
-#define vvvl vector<vvl>
+#define vl vector<long long>
+#define vvl vector<vector<long long>>
 #define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
 #define vpdbg(a) rep(ii,a.size()){cout<<"{"<<a[ii].first<<","<<a[ii].second<<"} ";}cout<<endl;
 #define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
@@ -17,7 +16,6 @@ using namespace std;
 #define mod 998244353LL
 //#define mod 1000000007LL
 #define eps 0.000000001
-#define circlepi 3.14159265358979323846
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
@@ -90,8 +88,66 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 
+//グラフgの頂点startからの最短経路を全ての頂点に対して求める。
+vl bfs(vvl &g,ll start){
+	queue<ll> bfs;
+	vl dist(g.size(),inf);
+	dist[start]=0;
+	bfs.push(start);
+	while(!bfs.empty()){
+		ll tmp=bfs.front();
+		bfs.pop();
+		rep(i,g[tmp].size()){
+			ll next=g[tmp][i];
+			if(dist[next]!=inf)continue;
+			dist[next]=dist[tmp]+1;
+			bfs.push(next);
+		}
+	}
+	return dist;
+}
+
 //メイン
 int main(){
-	
+	ll n,m;
+	cin>>n>>m;
+	vvl g(n);
+	rep(i,m){
+		ll u,v;
+		cin>>u>>v;
+		u--,v--;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	ll k;
+	cin>>k;
+	string color(n,'1');
+	vl p(k),d(k);
+	rep(z,k){
+		cin>>p[z]>>d[z];
+		p[z]--;
+		vl tmp=bfs(g,p[z]);
+		rep(i,n){
+			if(tmp[i]<d[z]){
+				color[i]='0';
+			}
+		}
+	}
+
+	rep(z,k){
+		vl tmp=bfs(g,p[z]);
+		bool ng=true;
+		rep(i,n){
+			if(tmp[i]==d[z]){
+				if(color[i]=='1')ng=false;
+			}
+		}
+		if(ng){
+			cout<<"No"<<endl;
+			return 0;
+		}
+	}
+	cout<<"Yes"<<endl;
+	cout<<color<<endl;
 	return 0;
 }

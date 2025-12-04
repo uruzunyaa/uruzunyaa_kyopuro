@@ -8,7 +8,7 @@ using namespace std;
 #define vl vector<ll>
 #define vvl vector<vector<ll>>
 
-//N頂点のグラフを生成する。
+//N頂点のグラフを生成する例。
 int main(){
     random_device seed_gen;
     mt19937_64 rnd(seed_gen());
