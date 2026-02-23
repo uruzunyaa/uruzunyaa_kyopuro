@@ -6,7 +6,7 @@ using namespace std;
 #define vl vector<long long>
 #define vvl vector<vector<long long>>
 
-//素因数分解
+//純粋素因数分解 O(√N)
 vector<ll> makePrime(ll n){
 	vector<ll> factors;
 	while (n % 2 == 0) {

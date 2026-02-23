@@ -142,47 +142,8 @@ struct SegTree{
 	/// @option_end max_right,min_left
 };
 
-/// @option_start 使用例
-
-ll mx(ll a,ll b){
-	return max(a,b);
-}
-ll checker;
-bool check(ll a){
-	return (a<checker);
-}
 
 //使用例ACLContestSegTree
 int main(){
-	ll n,q;
-	cin>>n>>q;
-	vl a(n);
-	rep(i,n)cin>>a[i];
-	SegTree<ll> seg(a,mx,0);
-
-	while(q--){
-		ll t;
-		cin>>t;
-		if(t==1){
-			ll x,v;
-			cin>>x>>v;
-			x--;
-			seg.update(x,v);
-		}else if(t==2){
-			ll l,r;
-			cin>>l>>r;
-			l--,r--;
-			cout<<seg.get(l,r)<<endl;
-		}else{
-			ll x,v;
-			cin>>x>>v;
-			x--;
-			checker=v;
-			ll tmp=seg.max_right(x,check)+2;
-			tmp=min(tmp,n+1);
-			cout<<tmp<<endl;
-		}
-	}
 	return 0;
 }
-/// @option_end 使用例
