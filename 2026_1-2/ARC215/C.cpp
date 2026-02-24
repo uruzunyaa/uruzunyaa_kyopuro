@@ -87,9 +87,68 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+void solve(){
+	ll n;
+	cin>>n;
+	vl x(n),y(n),z(n);
+	priority_queue<pair<ll,ll>> xx,yy,zz;
+	rep(i,n){
+		cin>>x[i]>>y[i]>>z[i];
+		xx.push({x[i],i});
+		yy.push({y[i],i});
+		zz.push({z[i],i});
+	}
+	ll mx=xx.top().first,my=yy.top().first,mz=zz.top().first;
+
+	vector<bool> ans(n,false);
+
+	while(1){
+		bool f=true;
+		while(!xx.empty()&&xx.top().first>=mx){
+			ll id=xx.top().second;
+			xx.pop();
+			mx=min(mx,x[id]);
+			my=min(my,y[id]);
+			mz=min(mz,z[id]);
+			if(ans[id]==false){
+				f=false;
+				ans[id]=true;
+			}
+		}
+		while(!yy.empty()&&yy.top().first>=my){
+			ll id=yy.top().second;
+			yy.pop();
+			mx=min(mx,x[id]);
+			my=min(my,y[id]);
+			mz=min(mz,z[id]);
+			if(ans[id]==false){
+				f=false;
+				ans[id]=true;
+			}
+		}
+		while(!zz.empty()&&zz.top().first>=mz){
+			ll id=zz.top().second;
+			zz.pop();
+			mx=min(mx,x[id]);
+			my=min(my,y[id]);
+			mz=min(mz,z[id]);
+			if(ans[id]==false){
+				f=false;
+				ans[id]=true;
+			}
+		}
+		if(f)break;
+	}
+
+	ll cnt=0;
+	rep(i,n)if(ans[i])cnt++;
+	cout<<cnt<<endl;
+}
 
 //メイン
 int main(){
-	
+	ll t;
+	cin>>t;
+	rep(i,t)solve();
 	return 0;
 }

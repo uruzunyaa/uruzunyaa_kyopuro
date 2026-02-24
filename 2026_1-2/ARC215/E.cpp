@@ -184,7 +184,6 @@ void solve(){
 		else checka[yy]='0';
 		ans3.push_back(val);
 	}
-
 	
 	cout<<ans3.size()<<endl;
 	vdbg(ans3);
