@@ -9,8 +9,12 @@
         "-lc",
         "set -e; ROOT=\"${workspaceFolder}\"; mkdir -p \"$ROOT/.bin\"; OUT=\"$ROOT/.bin/${fileBasenameNoExtension}\"; g++ -std=gnu++20 -O2 -Wall -Wextra -pedantic -I \"$ROOT/ac-library\" -o \"$OUT\" \"${file}\"; \"$OUT\""
       ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": ["$gcc"]
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
     }
   ]
 }
