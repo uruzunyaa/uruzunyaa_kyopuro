@@ -87,97 +87,63 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+ll n;
+vvl g;
+vector<bool> visited;
+vector<vector<pair<ll,ll>>> top2;
+ll hashs(ll mae,ll node){
+	return node*1000000000+mae;
+}
+
+ll dfs(ll mae,ll node){
+	if(3>g[node].size())return 0;
+	if(3==g[node].size()&&mae!=-1)return 1;
+
+	if(!visited[node]){
+		for(auto val:g[node]){
+			ll tmp=dfs(node,val)+1;
+			top2[node].push_back({tmp,val});
+		}
+		sort(top2[node].rbegin(),top2[node].rend());
+		while(top2[node].size()>2)top2[node].pop_back();
+		visited[node]=true;
+	}
+
+	ll ans=1;
+	if(mae!=top2[node][0].second)ans=top2[node][0].first;
+	else ans=top2[node][1].first;
+	return ans;
+}
+
 void solve(){
-	ll n;
 	cin>>n;
-	string a,b;
-	cin>>a>>b;
-
-	vector<vector<pair<ll,ll>>> g(n);
-	ll m;
-	cin>>m;
-	rep(i,m){
-		ll x,y;
-		cin>>x>>y;
-		x--,y--;
-		g[x].push_back({y,i+1});
+	g=vvl(n);
+	top2=vector<vector<pair<ll,ll>>>(n);
+	visited=vector<bool> (n,false);
+	rep(i,n-1){
+		ll a,b;
+		cin>>a>>b;
+		a--,b--;
+		g[a].push_back(b);
+		g[b].push_back(a);
 	}
 
-	vl ans1;
-
-	queue<ll> bfs;
-	rep(i,n)if(a[i]=='1')bfs.push(i);
-
-	//全部1を目指す
-	while(!bfs.empty()){
-		ll node=bfs.front();
-		bfs.pop();
-		for(auto val:g[node]){
-			if(a[val.first]=='0'){
-				ans1.push_back(val.second);
-				a[val.first]='1';
-				bfs.push(val.first);
-			}
-		}
-	}
-
-	//不可能判定
+	ll ans=0;
 	rep(i,n){
-		if(a[i]=='0'&&b[i]=='1'){
-			cout<<-1<<endl;
-			return;
-		}
+		ll tmp=dfs(-1,i);
+		//cout<<tmp<<endl;
+		ans=max(tmp,ans);
 	}
+	rep(i,n)if(g[i].size()>=2)ans=max(ans,1LL);
 
-	vl ans2;
-	rep(i,n){
-		if(b[i]=='1'){
-			bfs.push(i);
-		}else if(a[i]=='1'){
-			for(auto val:g[i]){
-				if(val.first==i&&a[i]=='1'){
-					ans2.push_back(val.second);
-					bfs.push(val.first);
-					a[i]='0';
-				}
-			}
-		}
-	}
+	cout<<ans<<endl;
 
-	//全部一致を目指す
-	while(!bfs.empty()){
-		ll node=bfs.front();
-		bfs.pop();
-		
-		for(auto val:g[node]){
-			if(a[val.first]=='1'&&b[val.first]=='0'){
-				ans2.push_back(val.second);
-				a[val.first]='0';
-				bfs.push(val.first);
-			}
-		}
-	}
-
-	//不可能判定
-	rep(i,n){
-		if(a[i]!=b[i]){
-			cout<<-1<<endl;
-			return;
-		}
-	}
-
-	while(!ans2.empty()){
-		ans1.push_back(ans2.back());
-		ans2.pop_back();
-	}
-	cout<<ans1.size()<<endl;
-	vdbg(ans1);
 }
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll q;
+	cin>>q;
+	rep(i,q)solve();
 	return 0;
 }

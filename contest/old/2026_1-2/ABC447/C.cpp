@@ -87,97 +87,52 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	ll n;
-	cin>>n;
-	string a,b;
-	cin>>a>>b;
-
-	vector<vector<pair<ll,ll>>> g(n);
-	ll m;
-	cin>>m;
-	rep(i,m){
-		ll x,y;
-		cin>>x>>y;
-		x--,y--;
-		g[x].push_back({y,i+1});
-	}
-
-	vl ans1;
-
-	queue<ll> bfs;
-	rep(i,n)if(a[i]=='1')bfs.push(i);
-
-	//全部1を目指す
-	while(!bfs.empty()){
-		ll node=bfs.front();
-		bfs.pop();
-		for(auto val:g[node]){
-			if(a[val.first]=='0'){
-				ans1.push_back(val.second);
-				a[val.first]='1';
-				bfs.push(val.first);
-			}
-		}
-	}
-
-	//不可能判定
-	rep(i,n){
-		if(a[i]=='0'&&b[i]=='1'){
-			cout<<-1<<endl;
-			return;
-		}
-	}
-
-	vl ans2;
-	rep(i,n){
-		if(b[i]=='1'){
-			bfs.push(i);
-		}else if(a[i]=='1'){
-			for(auto val:g[i]){
-				if(val.first==i&&a[i]=='1'){
-					ans2.push_back(val.second);
-					bfs.push(val.first);
-					a[i]='0';
-				}
-			}
-		}
-	}
-
-	//全部一致を目指す
-	while(!bfs.empty()){
-		ll node=bfs.front();
-		bfs.pop();
-		
-		for(auto val:g[node]){
-			if(a[val.first]=='1'&&b[val.first]=='0'){
-				ans2.push_back(val.second);
-				a[val.first]='0';
-				bfs.push(val.first);
-			}
-		}
-	}
-
-	//不可能判定
-	rep(i,n){
-		if(a[i]!=b[i]){
-			cout<<-1<<endl;
-			return;
-		}
-	}
-
-	while(!ans2.empty()){
-		ans1.push_back(ans2.back());
-		ans2.pop_back();
-	}
-	cout<<ans1.size()<<endl;
-	vdbg(ans1);
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	string s,t;
+	cin>>s>>t;
+
+	string es,et;
+	rep(i,s.size()){
+		if(s[i]!='A')es.push_back(s[i]);
+	}
+	rep(i,t.size()){
+		if(t[i]!='A')et.push_back(t[i]);
+	}
+
+	if(es!=et){
+		cout<<-1<<endl;
+		return 0;
+	}
+
+	vl ss,tt;
+
+	ll cnts=0,cntt=0;
+	rep(i,s.size()){
+		if(s[i]!='A'){
+			ss.push_back(cnts);
+			cnts=0;
+		}else {
+			cnts++;
+		}
+	}
+
+	rep(i,t.size()){
+		if(t[i]!='A'){
+			tt.push_back(cntt);
+			cntt=0;
+		}else {
+			cntt++;
+		}
+	}
+	ss.push_back(cnts);
+	tt.push_back(cntt);
+
+	ll ans=0;
+	rep(i,ss.size()){
+		ans+=abs(ss[i]-tt[i]);
+	}
+	cout<<ans<<endl;
 	return 0;
 }

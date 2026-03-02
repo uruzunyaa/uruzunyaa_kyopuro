@@ -25,8 +25,50 @@ mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+
+vl e;
+vl c;
+vl visited;
+//{コスト,閉路内か}
+pair<ll,bool> dfs(ll node){
+	if(visited[node]==1)return {0,false};
+	if(visited[node]==0){
+		visited[node]=1;
+		return {c[node],true};
+	}
+	visited[node]=0;
+	auto ans=dfs(e[node]);
+	if(visited[node]==1){
+		ans.second=false;
+	}
+
+	if(ans.second==true){
+		ans.first=min(ans.first,c[node]);
+	}
+	visited[node]=1;
+	return ans;
+}
+
 //メイン
 int main(){
+	ll n;
+	cin>>n;
+	visited=vl(n,-1);
+	rep(i,n){
+		ll tmp;
+		cin>>tmp;
+		tmp--;
+		e.push_back(tmp);
+	}
+	rep(i,n){
+		ll tmp;
+		cin>>tmp;
+		c.push_back(tmp);
+	}
+
+	ll ans=0;
+	rep(i,n)ans+=dfs(i).first;
+	cout<<ans<<endl;
 	
 	return 0;
 }

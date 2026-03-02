@@ -92,11 +92,16 @@ vl dy={0,1,0,-1};
 int main(){
 	string s;
 	cin>>s;
-	ll n;
-	cin>>n;
-	if(s.size()>=n){
-		cout<<"Yes"<<endl;
-	}else{
-		cout<<"No"<<endl;
+	vl bk(26,0);
+	ll mx=0;
+	rep(i,s.size()){
+		bk[s[i]-'a']++;
+		mx=max(mx,bk[s[i]-'a']);
 	}
+
+	rep(i,s.size()){
+		if(bk[s[i]-'a']!=mx)cout<<s[i];
+	}
+	cout<<endl;
+	return 0;
 }
