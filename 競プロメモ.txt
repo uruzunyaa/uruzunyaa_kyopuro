@@ -10,11 +10,13 @@
 339G
 
 「優先度：最高」
+ABC-447-G
 ABC-443-F
 ABC-443-G
 ABC-441-G
 ABC-342-G
 ABC-353-E
+ABC-447-F
 
 「優先度：高」
 横浜Regional-2025-A
@@ -213,6 +215,7 @@ ARC-184-B
 ARC-188-C
 ARC-185-E
 ARC-172-D
+ARC-214-F
 
 「Codeforces」
 CF-ECR-169(Div2)-E
@@ -370,7 +373,6 @@ https://drken1215.hatenablog.com/entry/2019/03/15/114200
 
 
 ライブラリ整備TODO
-トポロジカルソート
 約数列挙
 双対セグ木
 抽象化マージソートツリー
