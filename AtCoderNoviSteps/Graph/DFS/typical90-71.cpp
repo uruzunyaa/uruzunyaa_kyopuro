@@ -51,16 +51,59 @@ vl topological_sort(vvl g){
 	return ans;
 }
 
+
+vvl ans;
+
+ll n,k;
+void dfs(vl & root,set<ll> & ok,ll node,vvl & g,vl & indeg){
+	if(k==0)return;
+	root.push_back(node+1);
+	if(root.size()==n){
+		ans.push_back(root);
+		root.pop_back();
+		k--;
+		return;
+	}
+	ok.erase(node);
+	for(auto nxt : g[node]){
+		indeg[nxt]--;
+		if(indeg[nxt]==0)ok.insert(nxt);
+	}
+	
+	ll cnt=k;
+	vl kouho;
+	for(auto val:ok){
+		if(cnt==0)break;
+		kouho.push_back(val);
+		cnt--;
+	}
+
+	for(auto val:kouho){
+		dfs(root,ok,val,g,indeg);
+	}
+
+	for(auto nxt : g[node]){
+		indeg[nxt]++;
+		ok.erase(nxt);
+	}
+
+	root.pop_back();
+	ok.insert(node);
+	return;
+}
+
 //メイン
 int main(){
-	ll n,m,k;
+	ll m;
 	cin>>n>>m>>k;
 	vvl g(n);
+	vl indeg(n,0);
 	rep(i,m){
 		ll a,b;
 		cin>>a>>b;
 		a--,b--;
 		g[a].push_back(b);
+		indeg[b]++;
 	}
 	vl tps=topological_sort(g);
 	if(tps.size()!=n){
@@ -68,6 +111,22 @@ int main(){
 		return 0;
 	}
 
+	set<ll> ok;
+	rep(i,n){
+		if(indeg[i]==0)ok.insert(i);
+	}
+
+	vl root;
+	rep(i,n){
+		if(!ok.count(i))continue;
+		dfs(root,ok,i,g,indeg);
+	}
+
+	if(k!=0){
+		cout<<-1<<endl;
+	}else{
+		vvdbg(ans);
+	}
 	
 	return 0;
 }

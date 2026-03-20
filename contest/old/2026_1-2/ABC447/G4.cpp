@@ -28,14 +28,6 @@ mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は
 //被らせる数字毎に高速に解く事を考える
 //左から3つ目を固定して、上位4個と上位6個取ってくれば良い
 
-#include <bits/stdc++.h>
-using namespace std;
-#define ll long long
-#define rep(i,n) for (long long i=0;i<(ll)n;i++)
-#define loop(i,m,n) for(long long i=m;i<=(ll)n;i++)
-#define vl vector<long long>
-#define vvl vector<vector<long long>>
-
 //整数同士の累乗の計算をする。
 ll power(ll A, ll B) {
 	ll result = 1;
@@ -113,7 +105,7 @@ struct SegTree{
 		}
 		return ans;
 	}
-	/// @option_start max_right,min_left
+	// option_start max_right,min_left
 
 	// [l, r] (両端含む) で cond(get(l, r)) が true となる最大の r を返す
 	// cond は「区間の集約値 -> bool」
@@ -169,56 +161,169 @@ struct SegTree{
 
 		return 0;
 	}
-	/// @option_end max_right,min_left
+	// option_end max_right,min_left
 };
 
-
-vvl op(vvl a,vvl b){
-	vvl tmp;
-	for(auto val:a)tmp.push_back(val);
-	for(auto val:b)tmp.push_back(val);
-	sort(tmp.begin(), tmp.end(), [](const vl & aa, const vl& bb) {
-		return aa[2] > bb[2];
-	});
-
-	set<ll> use;
-	vvl ans;
-	ll i=0;
-	while(ans.size()<=6&&i<tmp.size()){
-		if(use.count(tmp[i][1])){
-			i++;
-			continue;
-		}
-		ans.push_back(tmp[i]);
-		use.insert(tmp[i][1]);
-		i++;
-	}
-	sort(ans.begin(),ans.end());
-	return ans;
+bool st(const vl & aa, const vl& bb) {
+	return aa[2] > bb[2];
 }
 
+vvl op(vvl a,vvl b){
+	vvl ans;
+	ll ai=0,bi=0;
+	while(ans.size()<6){
+		if(a.size()==ai&&b.size()==bi)break;
+		bool isa;
+		if(b.size()==bi)isa=true;
+		else if(a.size()==ai)isa=false;
+		else{
+			if(a[ai][2]>b[bi][2])isa=true;
+			else isa=false;
+		}
+		bool f=true;
+		if(isa){
+			rep(j,bi){
+				if(b[j][1]==a[ai][1]){
+					f=false;
+				}
+			}
+			
+			if(f){
+				ans.push_back(a[ai]);
+			}
+			ai++;
+		}else{
+			rep(j,ai){
+				if(a[j][1]==b[bi][1]){
+					f=false;
+				}
+			}
+			
+			if(f){
+				ans.push_back(b[bi]);
+			}
+			bi++;
+		}
+	}
+	return ans;
+}
+map<pair<ll,ll>,vvl> mp;
 
 //メイン
 int main(){
 	ll n;
 	cin>>n;
-	vector<vvl> v;
+	vector<vvl> v(n);
 	vvl e;
-
+	vl k(n),a(n);
+	
 	rep(i,n){
 		vl tmp;
-		ll k,a;
-		cin>>k>>a;
-		tmp={i,k,a};
+		cin>>k[i]>>a[i];
+		tmp={i,k[i],a[i]};
 		v[i].push_back(tmp);
+	}
+
+	vector<vvl> leftrow(n+1);
+	vvl now;
+	rep(i,n){
+		vl tmp={i,k[i],a[i]};
+
+		bool nothing=true;
+		for(auto & val:now){
+			if(val[1]==k[i]){
+				if(a[i]>=val[2]){
+					val=tmp;
+				}
+				nothing=false;
+			}
+		}
+		if(nothing)now.push_back(tmp);
+
+		sort(now.begin(),now.end(),st);
+		if(now.size()==5)now.pop_back();
+		leftrow[i]=now;
+	}
+
+	now.clear();
+	vector<vvl> rightrow(n+1);
+	rrep(i,n){
+		vl tmp={i,k[i],a[i]};
+
+		bool nothing=true;
+		for(auto & val:now){
+			if(val[1]==k[i]){
+				if(a[i]>=val[2]){
+					val=tmp;
+				}
+				nothing=false;
+			}
+		}
+		if(nothing)now.push_back(tmp);
+
+		sort(now.begin(),now.end(),st);
+		if(now.size()==7)now.pop_back();
+		rightrow[i]=now;
 	}
 
 	SegTree<vvl> seg(v,op,e);
 
+	ll ans=-1;
 	loop(i,2,n-4){
 		//3番目の要素をiで固定
+		vl left;
+		rep(j,leftrow[i-1].size()){
+			if(k[leftrow[i-1][j][0]]==k[i])continue;
+			left.push_back(leftrow[i-1][j][0]);
+			if(left.size()==3)break;
+		}
+		if(left.size()<2)continue;
+
+		vl right;
+		rep(j,rightrow[i+2].size()){
+			if(k[rightrow[i+2][j][0]]==k[i])continue;
+			right.push_back(rightrow[i+2][j][0]);
+			if(right.size()==5)break;
+		}
+		if(right.size()<2)continue;
+
+		sort(left.begin(), left.end());
+		sort(right.begin(), right.end());
 		
-		//
+		rep(two,left.size()){
+			rep(one,two){
+				//4個目を固定する場合
+				{
+					rep(four,right.size()){
+						vvl rrraw= rightrow[right[four]+1];
+						
+					}
+				}
+				rep(six,right.size()){
+					rep(five,six){
+						vvl middleraw;
+						if(mp.count({i+1,right[five]-1})){
+							middleraw=mp[{i+1,right[five]-1}];
+						}else{
+							middleraw=seg.get(i+1,right[five]-1);
+							mp[{i+1,right[five]-1}]=middleraw;
+						}
+						rep(middle,middleraw.size()){
+							ll four=middleraw[middle][0];
+							if(k[four]==k[left[one]])continue;
+							if(k[four]==k[left[two]])continue;
+							if(k[four]==k[i])continue;
+							if(k[four]==k[right[five]])continue;
+							if(k[four]==k[right[six]])continue;
+							ll score=a[left[one]]+a[left[two]]+a[i]+a[four]+a[right[five]]+a[right[six]];
+							ans=max(ans,score);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
+	cout<<ans<<endl;
 	return 0;
 }
