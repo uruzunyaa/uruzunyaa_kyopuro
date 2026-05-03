@@ -10,6 +10,18 @@
 339G
 
 「優先度：最高」
+ARC-216-C
+ARC-216-B
+ARC-217-E
+OUPC-2025-Q
+ABC-452-E
+ABC-453-G
+ARC-217-C
+ABC-452-G
+ABC-450-E
+ABC-451-D
+ABC-451-G
+AGC-077-A
 ABC-447-G
 ABC-443-F
 ABC-443-G
@@ -21,6 +33,8 @@ ABC-447-F
 「優先度：高」
 横浜Regional-2025-A
 横浜Regional-2025-C
+OUPC-2025-H
+OUPC-2025-G
 ABC-446-G
 ABC-445-G
 ABC-250-G
@@ -168,7 +182,9 @@ ABC-407-G
 ABC-419-G
 ABC-378-G
 ABC-393-G
+ABC-455-G
 ABC-444-G
+ABC-449-G
 ABC-402-G
 ABC-448-G
 ABC-419-E-Bounus(2乗解法)
@@ -256,6 +272,7 @@ SeriousOJ-Brain Booster-10-C
 AGC073-B
 MMAContest-20-J
 MMAContest-20-K
+OUPC2025-F
 モノグサ2508_K
 CodeQueen2025-F
 CodeQueen2025-H
@@ -268,6 +285,7 @@ TUATPC2025-Spring-I
 Yukicoder-KCPC-F
 Yukicoder-MathCafe-F
 Yukicoder-468-F
+AGC-077-E
 AGC-070-A
 TTPC2024-J
 TTPC2024-D
@@ -374,6 +392,9 @@ https://drken1215.hatenablog.com/entry/2019/03/15/114200
 
 
 ライブラリ整備TODO
+Cartesian Tree
+グラフの反転
+木の直系とその成分を求める
 約数列挙
 双対セグ木
 抽象化マージソートツリー
@@ -387,8 +408,8 @@ smallestsums(セグ木二分探索＋座圧)
 2-SAT
 Beats！
 SufixArray
-永続配列セグメント木
-永続配列UnionFind
+永続セグメント木
+永続UnionFind
 円の共通接戦
 内接円の中心
 外接円の中心
