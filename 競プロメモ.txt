@@ -392,7 +392,6 @@ https://drken1215.hatenablog.com/entry/2019/03/15/114200
 
 
 ライブラリ整備TODO
-Cartesian Tree
 グラフの反転
 木の直系とその成分を求める
 約数列挙
