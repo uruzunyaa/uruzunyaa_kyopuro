@@ -87,60 +87,16 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	ll n;
-	cin>>n;
-	vl rowa,rowb;
-	vvl a(n),b(n);
-	rep(i,n){
-		ll aa;
-		cin>>aa;
-		aa--;
-		a[aa].push_back(i);
-		rowa.push_back(aa);
-	}
-	rep(i,n){
-		ll bb;
-		cin>>bb;
-		bb--;
-		b[bb].push_back(i);
-		rowb.push_back(bb);
-	}
-
-	UnionFind uf(n);
-	rep(i,n){
-		uf.unite(rowa[i],rowb[i]);
-	}
-
-	ll ans=0;
-	set<ll> ends;
-	bool f=true;
-	//数字iについて検討
-	rep(i,n){
-		ll tmp=min(a[i].size(),b[i].size());
-		ll mx=max(a[i].size(),b[i].size());
-		ans+=tmp;
-		//非対称なら行ける奴として登録
-		if(tmp!=mx||tmp==0){
-			ends.insert(uf.root(i));
-		}
-		if(tmp!=mx)f=false;
-	}
-	set<ll> dame;
-	rep(i,n){
-		if(ends.count(uf.root(i)))continue;
-		dame.insert(uf.root(i));
-	}
-	ans-=dame.size();
-	if(f&&dame.size()==1)ans++;
-	cout<<ans<<endl;
-	return;
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n;
+	cin>>n;
+	string s="HelloWorld";
+	rep(i,s.size()){
+		if(i==n-1)continue;
+		cout<<s[i];
+	}
+	cout<<endl;
 	return 0;
 }

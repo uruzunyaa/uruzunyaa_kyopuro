@@ -88,53 +88,37 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 void solve(){
-	ll n;
-	cin>>n;
-	vl rowa,rowb;
-	vvl a(n),b(n);
-	rep(i,n){
-		ll aa;
-		cin>>aa;
-		aa--;
-		a[aa].push_back(i);
-		rowa.push_back(aa);
+	string s;
+	cin>>s;
+	vl ch(26,0);
+	rep(i,s.size()){
+		ch[s[i]-'a']++;
 	}
-	rep(i,n){
-		ll bb;
-		cin>>bb;
-		bb--;
-		b[bb].push_back(i);
-		rowb.push_back(bb);
-	}
-
-	UnionFind uf(n);
-	rep(i,n){
-		uf.unite(rowa[i],rowb[i]);
-	}
-
-	ll ans=0;
-	set<ll> ends;
-	bool f=true;
-	//数字iについて検討
-	rep(i,n){
-		ll tmp=min(a[i].size(),b[i].size());
-		ll mx=max(a[i].size(),b[i].size());
-		ans+=tmp;
-		//非対称なら行ける奴として登録
-		if(tmp!=mx||tmp==0){
-			ends.insert(uf.root(i));
+	priority_queue<pair<ll,char>> pq;
+	rep(i,26){
+		if(ch[i]>(s.size()+1)/2){
+			cout<<"No"<<endl;
+			return;
 		}
-		if(tmp!=mx)f=false;
+		if(ch[i]==0)continue;
+		pq.push({ch[i],i+'a'});
 	}
-	set<ll> dame;
-	rep(i,n){
-		if(ends.count(uf.root(i)))continue;
-		dame.insert(uf.root(i));
+	string ans;
+	while(pq.size()>1){
+		pair<ll,char> big=pq.top();
+		pq.pop();
+		pair<ll,char> sec=pq.top();
+		pq.pop();
+		ans.push_back(big.second);
+		ans.push_back(sec.second);
+		big.first--;
+		sec.first--;
+		if(big.first!=0)pq.push(big);
+		if(sec.first!=0)pq.push(sec);
 	}
-	ans-=dame.size();
-	if(f&&dame.size()==1)ans++;
+	if(pq.size()==1)ans.push_back(pq.top().second);
+	cout<<"Yes"<<endl;
 	cout<<ans<<endl;
-	return;
 }
 
 //メイン

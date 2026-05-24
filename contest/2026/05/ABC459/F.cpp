@@ -90,51 +90,35 @@ vl dy={0,1,0,-1};
 void solve(){
 	ll n;
 	cin>>n;
-	vl rowa,rowb;
-	vvl a(n),b(n);
-	rep(i,n){
-		ll aa;
-		cin>>aa;
-		aa--;
-		a[aa].push_back(i);
-		rowa.push_back(aa);
-	}
-	rep(i,n){
-		ll bb;
-		cin>>bb;
-		bb--;
-		b[bb].push_back(i);
-		rowb.push_back(bb);
-	}
-
-	UnionFind uf(n);
-	rep(i,n){
-		uf.unite(rowa[i],rowb[i]);
-	}
-
+	vl a(n);
+	rep(i,n)cin>>a[i];
+	vector<pair<ll,ll>> st;
 	ll ans=0;
-	set<ll> ends;
-	bool f=true;
-	//数字iについて検討
-	rep(i,n){
-		ll tmp=min(a[i].size(),b[i].size());
-		ll mx=max(a[i].size(),b[i].size());
-		ans+=tmp;
-		//非対称なら行ける奴として登録
-		if(tmp!=mx||tmp==0){
-			ends.insert(uf.root(i));
+	st.push_back({0,inf});
+	a.push_back(inf);
+
+	loop(i,1,n-1){
+		ll dif=a[i]-a[i-1];
+		dif--;
+		if(dif>0){
+			st.push_back({i,dif});
+			continue;
 		}
-		if(tmp!=mx)f=false;
+		if(dif==0)continue;
+		
+		while(dif<0){
+			//直近だけ2倍
+			ll tmp=min(st.back().second,(-dif+1)/2);
+			a[i]+=tmp;
+			ans+=tmp*(i-st.back().first);
+			st.back().second-=tmp;
+			dif+=tmp*2;
+			if(st.back().second==0)st.pop_back();
+		}
+		if(dif==1)st.push_back({i,1});
+		//cout<<ans<<endl;
 	}
-	set<ll> dame;
-	rep(i,n){
-		if(ends.count(uf.root(i)))continue;
-		dame.insert(uf.root(i));
-	}
-	ans-=dame.size();
-	if(f&&dame.size()==1)ans++;
 	cout<<ans<<endl;
-	return;
 }
 
 //メイン

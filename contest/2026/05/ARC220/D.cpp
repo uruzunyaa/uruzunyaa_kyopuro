@@ -19,77 +19,140 @@ using namespace std;
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
-//#include<boost/multiprecision/cpp_int.hpp>
-//#define bbi boost::multiprecision::cpp_int
-//#include<atcoder/lazysegtree>
-
-
-//整数同士の累乗の計算をする。
-ll power(ll A, ll B) {
-	ll result = 1;
-	for (ll i=0;i<B;i++){
-		result *= A;
-	}
-	return result;
+void myassert(string s){
+	cout<<s<<endl;
+	assert(false);
 }
 
-// nのk乗をmodで割った余りを計算
-ll power_mod(ll n, ll k){
-	long long result = 1;
-	while (k > 0){
-		if ((k&1) ==1)result=(result*n)%mod;
-		n=n*n%mod;
-		k >>= 1;
+bool judge(ll n,vl a){
+	ll k=(n-2)*(n-2);
+	k++;
+	k/=2;
+
+	if(a.size()<k){
+		myassert("size");
 	}
-	return result;
-}
-
-
-//受け取った2次元文字の外側に、文字pをコーティングする。
-vector<string> pad(vector<string> &s,char p){
-	ll h=s.size();
-	ll w=s[0].size();
-	vector<string> res(h+2,string(w+2,p));
-	rep(i,h)rep(j,w)res[i+1][j+1]=s[i][j];
-	return res;
-}
-
-// Union-Find
-struct UnionFind {
-	vector<int> par, siz;
-	UnionFind(int n) : par(n, -1) , siz(n, 1) { }
-	// 根を求める
-	int root(int x) {
-		if (par[x] == -1) return x;
-		else return par[x] = root(par[x]);
-	}
-	// x と y が同じグループに属するかどうか (根が一致するかどうか)
-	bool issame(int x, int y) {
-		return root(x) == root(y);
-	}
-	// x を含むグループと y を含むグループとを併合する
-	bool unite(int x, int y) {
-		x = root(x), y = root(y);
-		if (x == y) return false; 
-		if (siz[x] < siz[y]) swap(x, y);
-		par[y] = x;
-		siz[x] += siz[y];
-		return true;
-	}
-	// x を含むグループのサイズ
-	int size(int x) {
-		return siz[root(x)];
-	}
-};
-
-
-//グリッド問題等用
-vl dx={1,0,-1,0};
-vl dy={0,1,0,-1};
-
-
-//メイン
-int main(){
 	
-	return 0;
+	set<pair<ll,ll>> st;
+	rep(i,a.size()-1){
+		pair<ll,ll> tmp={a[i],a[i+1]};
+		if(tmp.first>tmp.second)swap(tmp.first,tmp.second);
+		if(st.count(tmp)||tmp.first==tmp.second){
+			myassert("twice_use");
+		}
+		st.insert(tmp);
+	}
+
+	rep(i,a.size()-2){
+		if(abs(a[i]-a[i+2])>=2)myassert("abs_is_not_1");
+	}
+
+	rep(i,a.size()){
+		if(a[i]>n)myassert("overflow");
+	}
+	return true;
+}
+
+void dfs(ll n,ll offsetx,ll offsety,vl & ans){
+	ll x=((n-2)/6)*2+2,y=n;
+	if(n<5)return;
+	if(n==5){
+		ans.push_back(y+offsety);
+		ans.push_back(x+1+offsetx);
+		ans.push_back(y-1+offsety);
+		ans.push_back(x+offsetx);
+		return;
+	}
+	while(x!=n-3){
+		ans.push_back(y+offsety);
+		ans.push_back(x+1+offsetx);
+		ans.push_back(y-1+offsety);
+		ans.push_back(x+2+offsetx);
+		x+=2;
+	}
+	y-=2;
+	while(x!=2){
+		ans.push_back(y+offsety);
+		ans.push_back(x-1+offsetx);
+		ans.push_back(y-1+offsety);
+		ans.push_back(x-2+offsetx);
+		x-=2;
+		y-=2;
+	}
+	y+=2;
+	while(y!=n){
+		ans.push_back(y+offsety);
+		ans.push_back(x-1+offsetx);
+		ans.push_back(y+1+offsety);
+		ans.push_back(x+offsetx);
+		y+=2;
+	}
+	while(x!=((n-2)/6)*2+2){
+		ans.push_back(y+offsety);
+		ans.push_back(x+1+offsetx);
+		ans.push_back(y-1+offsety);
+		ans.push_back(x+2+offsetx);
+		x+=2;
+	}
+	dfs(n-6,offsetx+2,offsety+4,ans);
+	return;
+}
+
+void solve(ll n){
+	vl ans;
+	if(n%2==0){
+		ll k=(n-2)*(n-2);
+		k++;
+		k/=2;
+
+		ll small=1;
+		ll big=2;
+		if(n%2==1)big++;
+		ans.push_back(big);
+		big++;
+
+		while(ans.size()<k){
+			if((small/2)%2==0){
+				ans.push_back(small);
+				ans.push_back(big);
+				ans.push_back(small+1);
+				ans.push_back(big+1);
+				big+=2;
+				if(n-big<1){
+					small+=2;
+					big-=2;
+				}
+			}else{
+				ans.push_back(small);
+				ans.push_back(big);
+				ans.push_back(small+1);
+				ans.push_back(big-1);
+				big-=2;
+				if(small+2==big||small+3==big){
+					small+=2;
+					big+=2;
+				}
+			}
+		}
+	}else{
+		ans.push_back(((n-2)/6)*2+2);
+		dfs(n,0,0,ans);
+	}
+	
+	cout<<ans.size()<<endl;
+	vdbg(ans);
+	judge(n,ans);
+	return;	
+}
+
+int main(){
+	ll t;
+	cin>>t;
+	rep(i,t){
+		ll n;
+		cin>>n;
+		//n=i+3;
+		//cout<<"test of "<<n<<endl;
+		solve(n);
+	}
 }
