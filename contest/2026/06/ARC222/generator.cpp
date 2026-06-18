@@ -13,14 +13,16 @@ int main(){
     random_device seed_gen;
     mt19937_64 rnd(seed_gen());
     
-    uniform_int_distribution<ll> dist_N(1, 8);
+    uniform_int_distribution<ll> dist_N(0, 4);
     ll a = dist_N(rnd);
     ll b = dist_N(rnd);
     ll c = dist_N(rnd);
+    if(a+b+c<3){
+        c+=3;
+    }
 	
 
 	cout<<1<<"\n";
-    cout << n << " "<< g.size()<<"\n";
-    rep(i,g.size()) cout << g[i].first << " "<< g[i].second<<"\n";
+    cout << a << " "<< b <<" "<< c <<"\n";
     return 0;
 }

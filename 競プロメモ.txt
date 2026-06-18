@@ -394,6 +394,7 @@ https://drken1215.hatenablog.com/entry/2019/03/15/114200
 
 
 ライブラリ整備TODO
+累積和の取得系(コンストラクタにstringも対応させて)
 SparseTable
 HL分解
 LinkCutTree
