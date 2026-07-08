@@ -30,17 +30,17 @@ ll power(ll A, ll B) {
 	return result;
 }
 
-// nのk乗をmodで割った余りを計算
+// nのk乗をmodで割った余りを計算(modはdefineで定義想定)
 ll power_mod(ll n, ll k){
-	long long result = 1;
+	n%=mod;
+	ll ans = 1;
 	while (k > 0){
-		if ((k&1) ==1)result=(result*n)%mod;
+		if ((k&1) ==1)ans=(ans*n)%mod;
 		n=n*n%mod;
 		k >>= 1;
 	}
-	return result;
+	return ans;
 }
-
 
 //受け取った2次元文字の外側に、文字pをコーティングする。
 vector<string> pad(vector<string> &s,char p){

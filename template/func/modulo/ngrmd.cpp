@@ -20,6 +20,7 @@ random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
 ll power_mod(ll n, ll k){
+	n%=mod;
 	long long result = 1;
 	while (k > 0){
 		if ((k&1) ==1)result=(result*n)%mod;
@@ -49,6 +50,7 @@ void make_fact_and_factinv(ll n){
 	}
 }
 ll ncrmd(ll n,ll r){
+	if(r<0||n<r)return 0;
 	while(fact.size()<=n){
 		ll i=fact.size();
 		fact.push_back((fact[i-1]*i)%mod);

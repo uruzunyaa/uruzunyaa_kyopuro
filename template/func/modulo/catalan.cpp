@@ -20,6 +20,7 @@ random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
 ll power_mod(ll n, ll k){
+	n%=mod;
 	long long result = 1;
 	while (k > 0){
 		if ((k&1) ==1)result=(result*n)%mod;
@@ -49,6 +50,7 @@ void make_fact_and_factinv(ll n){
 	}
 }
 ll ncrmd(ll n,ll r){
+	if(r<0||n<r)return 0;
 	while(fact.size()<=n){
 		ll i=fact.size();
 		fact.push_back((fact[i-1]*i)%mod);
@@ -61,11 +63,21 @@ ll ncrmd(ll n,ll r){
 	return ans;
 }
 
-//x>=yを保ちながら(0,0)から(n,k)へ行く経路の998
-ll catalan(ll n,ll k){
-	if(k==0)return 1;
-	ll ans=ncrmd(n+k,k);
-	ans+=mod-ncrmd(n+k,k-1);
+//x+k>yを保ちながら(a,b)から(c,d)へ行く経路の998
+//鏡像法を忘れたらABC205-Eを参照せよ
+ll catalan(ll a,ll b,ll c,ll d,ll k=0){
+	if(a+k<=b||c+k<=d)return 0;
+	//平行移動でaとkを0に帰着させる。
+	b-=a,c-=a,d-=a;
+	a=0;
+	b-=k;
+	d-=k;
+	k=0;
+
+	//まず、行き方を全部足す
+	ll ans=ncrmd((d-b)+(c),(d-b));
+	//初めてNGを起こす場所で折り返した経路を数えて引く
+	ans+=mod-ncrmd((d-b)+(c),(d));
 	ans%=mod;
 	return ans;
 }

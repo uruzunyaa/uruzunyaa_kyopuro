@@ -26,8 +26,14 @@ struct RollingHash{
 	map<T,ll> table;
 
 	//(HashTable)
-	RollingHash(map<T,ll> h){table=h;}
+	RollingHash(map<T,ll> h,string shokis=string()){
+		table=h;
+		rep(i,shokis.size()){
+			push_back(shokis[i]);
+		}
+	}
 
+	//push_backは1文ずつ入れる時に使う。初期化はコンストラクタ。
 	void push_back(T c){
 		if(base.size()==hash.size()){
 			base.push_back({(base.back().first*base[1].first)%md,(base.back().second*base[1].second)%md});
@@ -43,20 +49,22 @@ struct RollingHash{
 		rhash.pop_back();
 	}
 
+	//半開区間[l,r)
 	pair<ll,ll> get_hash(ll l,ll r){
 		pair<ll,ll> ans={((hash[r].first-hash[l].first+md)*baseinv[l].first)%md,((hash[r].second-hash[l].second+md)*baseinv[l].second)%md};
 		return ans;
 	}
-
+	//半開区間[l,r)
 	pair<ll,ll> get_revhash(ll l,ll r){
 		pair<ll,ll> ans={(rhash[r].first-((rhash[l].first*base[r-l].first)%md)+md)%md,(rhash[r].second-((rhash[l].second*base[r-l].second)%md)+md)%md};
 		return ans;
 	}
 
+	//半開区間[l,r)が回文か判定する
 	bool ispalindrome(ll l,ll r){
-		pair<ll,ll> obv={((hash[r].first-hash[l].first+md)*baseinv[l].first)%md,((hash[r].second-hash[l].second+md)*baseinv[l].second)%md};
-		pair<ll,ll> rev={(rhash[r].first-((rhash[l].first*base[r-l].first)%md)+md)%md,(rhash[r].second-((rhash[l].second*base[r-l].second)%md)+md)%md};
-		return obv==rev;		
+		pair<ll,ll> obv=get_hash(l,r);
+		pair<ll,ll> rev=get_revhash(l,r);
+		return obv==rev;
 	}
 	
 	ll size(){
@@ -76,6 +84,9 @@ int main(){
 	rep(i,26){
 		table['a'+i]=mt()%1048828087;
 	}
-	RollingHash<char> s(table);
+	RollingHash<char> s(table,"abb");
+	s.push_back('a');
+	s.push_back('b');
+	if(s.ispalindrome(0,4))cout<<"Yes"<<endl;
 	return 0;
 }
