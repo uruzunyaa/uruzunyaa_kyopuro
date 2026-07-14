@@ -89,7 +89,49 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+ll my_popcount(ll a){
+	ll ans=0;
+	rep(i,25){
+		if(a&(1LL<<i))ans++;
+	}
+	return ans;
+}
+
 void solve(){
+	ll n,k;
+	cin>>n>>k;
+	if(n<30){
+		ll twon=(1LL<<n);
+		if(twon<k){
+			cout<<-1<<endl;
+			return;
+		}
+	}
+	
+	vl tmp;
+	loop(i,1,k){
+		string s=to_string(i);
+		tmp.push_back(s.size());
+	}
+	vl cnt(n+1,0);
+	ll p=1;
+	rep(b,n+1){
+		cnt[b]=p;
+		if(p>1000000000)break;
+		if(b==n)break;
+		p*=n-b;
+		p/=b+1;
+	}
+
+	ll ans=0;
+	ll ind=0;
+	while(tmp.size()>0){
+		if(cnt[ind]==0)ind++;
+		cnt[ind]--;
+		ans+=ind*tmp.back();
+		tmp.pop_back();
+	}
+	cout<<ans<<endl;
 	return;
 }
 
@@ -97,6 +139,8 @@ void solve(){
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t){
+		solve();
+	}
 	return 0;
 }

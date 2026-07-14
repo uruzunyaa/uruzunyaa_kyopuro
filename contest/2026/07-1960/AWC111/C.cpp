@@ -89,14 +89,63 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	return;
-}
+//imos法。サイズ与えたら0初期化、配列ならそれで初期化
+//加算は閉区間[l,r]で行われる。
+struct Imos1d{
+	ll n;
+	vl sums;
+	Imos1d(ll siz){
+		n=siz;
+		sums=vl(n+1,0);
+	}
+	Imos1d(vl a){
+		n=a.size();
+		sums=vl(n+1,0);
+		rep(i,n){
+			sums[i]+=a[i];
+			sums[i+1]-=a[i];
+		}
+	}
+	//[l,r]にxを加算
+	void add(ll l,ll r,ll x){
+		if(r<l)return;
+		r++;
+		sums[l]+=x;
+		sums[r]-=x;
+	}
+	//現時点を復元して返す。
+	vl get(){
+		vl ans(n,0);
+		ll tmp=0;
+		rep(i,n){
+			tmp+=sums[i];
+			ans[i]=tmp;
+		}
+		return ans;
+	}
+};
+
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n,m;
+	cin>>n>>m;
+	vl h(n);
+	rep(i,n)cin>>h[i];
+	Imos1d ims(h);
+	vl t(n);
+	rep(i,n)cin>>t[i];
+	rep(i,m){
+		ll l,r,w;
+		cin>>l>>r>>w;
+		l--,r--;
+		ims.add(l,r,w);
+	}
+	h=ims.get();
+	ll ans=0;
+	rep(i,n){
+		if(h[i]>=t[i])ans++;
+	}
+	cout<<ans<<endl;
 	return 0;
 }

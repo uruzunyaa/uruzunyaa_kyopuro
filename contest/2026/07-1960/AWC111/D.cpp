@@ -89,14 +89,68 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
+void calc(vector<set<string>>& s,ll ind,string now,set<string> &ans){
+	if(s.size()==ind){
+		ans.insert("a"+now+"b");
+		return;
+	}
+	for(auto val:s[ind]){
+		calc(s,ind+1,now+val,ans);
+	}
 	return;
+}
+
+set<string> dfs(ll node,ll mae,vvl &g){
+	set<string> ans;
+	vector<set<string>> gtmp;
+	rep(i,g[node].size()){
+		if(g[node][i]==mae)continue;
+		//cout<<node<<" "<<mae<<" "<<g[node][i]<<endl;
+		set<string> ttmp=dfs(g[node][i],node,g);
+		gtmp.push_back(ttmp);
+	}
+	vl ind;
+	rep(i,gtmp.size())ind.push_back(i);
+	do{
+		vector<set<string>> s;
+		rep(i,ind.size())s.push_back(gtmp[ind[i]]);
+		string now;
+		calc(s,0,now,ans);
+	}while(next_permutation(ind.begin(),ind.end()));
+	return ans;
 }
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n;
+	cin>>n;
+	vvl ga(n);
+	vvl gb(n);
+	rep(i,n-1){
+		ll u,v;
+		cin>>u>>v;
+		u--,v--;
+		ga[u].push_back(v);
+		ga[v].push_back(u);
+	}
+	
+	set<string> a=dfs(0,-1,ga);
+
+	rep(i,n-1){
+		ll u,v;
+		cin>>u>>v;
+		u--,v--;
+		gb[u].push_back(v);
+		gb[v].push_back(u);
+	}
+	set<string> b=dfs(0,-1,gb);
+
+
+	vector<string> ans;
+	for(auto val:a){
+		if(b.count(val))ans.push_back(val);
+	}
+	cout<<ans.size()<<endl;
+	rep(i,ans.size())cout<<ans[i]<<endl;
 	return 0;
 }

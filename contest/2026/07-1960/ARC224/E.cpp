@@ -90,6 +90,52 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 void solve(){
+	string s;
+	cin>>s;
+
+	vector<char> st;
+	rep(i,s.size()){
+		if(st.size()==0){
+			st.push_back(s[i]);
+			continue;
+		}
+		if(s[i]=='A'){
+			st.push_back('A');
+			continue;
+		}
+		if(s[i]=='B'){
+			if(st.back()=='A'||st.back()=='C'){
+				st.push_back('B');
+			}else{
+				while(st.size()>1&&st[st.size()-1]=='B'&&st[st.size()-2]=='A'){
+					st.pop_back();
+					st.pop_back();
+				}
+				st.push_back('B');
+			}
+			continue;
+		}
+		if(s[i]=='C'){
+			while(st.size()>0&&st.back()=='A'){
+				st.pop_back();
+			}
+			if(st.size()>1&&st[st.size()-1]=='B'&&st[st.size()-2]=='A'){
+				st.pop_back();
+				st.pop_back();
+			}else{
+				st.push_back('C');
+			}
+			continue;
+		}
+	}
+	ll ans=st.size();
+	rep(i,st.size()){
+		if(st[i]=='A')ans--;
+	}
+	rep(i,st.size()-1){
+		if(st[i]=='A'&&st[i+1]=='B')ans--;
+	}
+	cout<<ans<<endl;
 	return;
 }
 
@@ -97,6 +143,8 @@ void solve(){
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t){
+		solve();
+	}
 	return 0;
 }

@@ -49,28 +49,18 @@ struct RollingHash{
 		rhash.pop_back();
 	}
 
-	//半開区間[l,r]
+	//半開区間[l,r)
 	pair<ll,ll> get_hash(ll l,ll r){
-		if(r<l){
-			pair<ll,ll>ans={0LL,0LL};
-			return(ans);
-		}
-		r++;
 		pair<ll,ll> ans={((hash[r].first-hash[l].first+md)*baseinv[l].first)%md,((hash[r].second-hash[l].second+md)*baseinv[l].second)%md};
 		return ans;
 	}
-	//閉区間[l,r]
+	//半開区間[l,r)
 	pair<ll,ll> get_revhash(ll l,ll r){
-		if(r<l){
-			pair<ll,ll>ans={0LL,0LL};
-			return(ans);
-		}
-		r++;
 		pair<ll,ll> ans={(rhash[r].first-((rhash[l].first*base[r-l].first)%md)+md)%md,(rhash[r].second-((rhash[l].second*base[r-l].second)%md)+md)%md};
 		return ans;
 	}
 
-	//閉区間[l,r]が回文か判定する
+	//半開区間[l,r)が回文か判定する
 	bool ispalindrome(ll l,ll r){
 		pair<ll,ll> obv=get_hash(l,r);
 		pair<ll,ll> rev=get_revhash(l,r);
@@ -94,9 +84,26 @@ int main(){
 	rep(i,26){
 		table['a'+i]=mt()%1048828087;
 	}
-	RollingHash<char> s(table,"abb");
-	s.push_back('a');
-	s.push_back('b');
-	if(s.ispalindrome(0,3))cout<<"Yes"<<endl;
+	ll n;
+	cin>>n;
+	RollingHash<char> mae(table);
+
+	ll ans=0;
+	rep(i,n){
+		string s;
+		cin>>s;
+		ans+=s.size();
+		RollingHash<char> now(table,s);
+
+		ll mx=0;
+		loop(i,1,min(mae.size(),now.size())-1){
+			if(mae.get_hash(mae.size()-i,mae.size())==now.get_hash(0,i)){
+				mx=max(i,mx);
+			}
+		}
+		ans-=mx;
+		swap(mae,now);
+	}
+	cout<<ans<<endl;
 	return 0;
 }

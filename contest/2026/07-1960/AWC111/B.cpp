@@ -89,14 +89,27 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	return;
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n,m;
+	cin>>n>>m;
+	vl s(m);
+	rep(i,m)cin>>s[i];
+	
+	sort(s.begin(),s.end());
+	ll mx=s[0]+n-s[m-1];
+	rep(i,m-1){
+		mx=max(mx,s[i+1]-s[i]);
+	}
+	ll mn=n-mx;
+	mn=(mn+1)/2;
+
+	ll p=360*mn;
+	ll q=n;
+	ll g=gcd(p,q);
+	p/=g;
+	q/=g;
+	cout<<p<<"/"<<q<<endl;
 	return 0;
 }

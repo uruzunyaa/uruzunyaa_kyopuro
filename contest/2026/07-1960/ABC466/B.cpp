@@ -89,14 +89,18 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	return;
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n,m;
+	cin>>n>>m;
+	vl ans(m,-1);
+	rep(i,n){
+		ll c,s;
+		cin>>c>>s;
+		c--;
+		ans[c]=max(ans[c],s);
+	}
+	vdbg(ans);
 	return 0;
 }

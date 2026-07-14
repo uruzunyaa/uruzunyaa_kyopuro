@@ -89,14 +89,51 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
+//小数点切り捨ての√を求める。
+ll introot(ll n) {
+	if (n < 0) return false;
+	ll sqrtN = static_cast<ll>(sqrt(n));
+	ll ans=0;
+	loop(i,max(0LL,sqrtN-2),sqrtN+2){
+		if(i * i <= n)ans=i;
+	}
+	return ans;
+}
+
+void dfs(ll node,ll mae,ll num,vvl & g,vl & ans){
+	if(ans[node]!=-1){
+		return;
+	}
+	ans[node]=num;
+	for(auto val:g[node]){
+		if(val==mae)continue;
+		dfs(val,node,num+1,g,ans);
+	}
 	return;
+}
+
+void solve(){
+	ll n,m;
+	cin>>n>>m;
+	vvl g(n);
+	rep(i,m){
+		ll u,v;
+		cin>>u>>v;
+		u--,v--;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+	vl ans(n,-1);
+	dfs(0,-1,0,g,ans);
+	vdbg(ans);
 }
 
 //メイン
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t){
+		solve();
+	}
 	return 0;
 }

@@ -89,14 +89,19 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	return;
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n;
+	cin>>n;
+	rep(i,n){
+		ll a;
+		cin>>a;
+		if(a>=0){
+			cout<<"No"<<endl;
+			return 0;
+		}
+	}
+	cout<<"Yes"<<endl;
 	return 0;
 }

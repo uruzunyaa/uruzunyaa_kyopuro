@@ -89,14 +89,32 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	return;
-}
 
 //メイン
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	ll n,m;
+	cin>>n>>m;
+	vector<set<ll>> yoko(n),tate(n);
+	rep(i,m){
+		ll r,c;
+		cin>>r>>c;
+		r--,c--;
+		for(auto val:yoko[r]){
+			tate[val].erase(r);
+		}
+		for(auto val:tate[c]){
+			yoko[val].erase(c);
+		}
+		yoko[r].clear();
+		tate[c].clear();
+		yoko[r].insert(c);
+		tate[c].insert(r);
+	}
+
+	ll ans=0;
+	rep(i,n){
+		ans+=yoko[i].size();
+	}
+	cout<<ans<<endl;
 	return 0;
 }

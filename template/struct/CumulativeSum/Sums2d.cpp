@@ -9,13 +9,13 @@ using namespace std;
 #define vvl vector<vector<ll>>
 
 //二次元累積和を生成する。
-struct CumulativeSum2d{
+struct Sums2d{
 	ll h,w;
 	vvl sums;
-	CumulativeSum2d(vvl row){
+	Sums2d(vvl row){
 		h=(row.size());
 		w=(row[0].size());
-		sums=vvl(h,vl(w,0));
+		sums=vvl(h+1,vl(w+1,0));
 		rep(i,h)rep(j,w){
 			sums[i+1][j+1]+=sums[i+1][j];
 			sums[i+1][j+1]+=sums[i][j+1];
@@ -23,7 +23,7 @@ struct CumulativeSum2d{
 			sums[i+1][j+1]+=row[i][j];
 		}
 	}
-	CumulativeSum2d(vector<string> row_s){
+	Sums2d(vector<string> row_s){
 		h=(row_s.size());
 		w=(row_s[0].size());
 		sums=vvl(h+1,vl(w+1,0));
@@ -36,6 +36,7 @@ struct CumulativeSum2d{
 	}
 	//左上座標と右下座標を指定する。(半開区間でない)
 	ll get(ll u,ll l,ll d,ll r){
+		if(d<u||r<l)return 0;
 		d++,r++;
 		ll ans=0;
 		ans+=sums[u][l];

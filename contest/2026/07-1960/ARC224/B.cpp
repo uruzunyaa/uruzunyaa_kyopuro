@@ -89,14 +89,41 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+//小数点切り捨ての√を求める。
+ll introot(ll n) {
+	if (n < 0) return false;
+	ll sqrtN = static_cast<ll>(sqrt(n));
+	ll ans=0;
+	loop(i,max(0LL,sqrtN-2),sqrtN+2){
+		if(i * i <= n)ans=i;
+	}
+	return ans;
+}
+
 void solve(){
-	return;
+	ll n;
+	cin>>n;
+	ll ans=0;
+	
+	ll h=introot(n);
+	{
+		ll w=(n+h-1)/h;
+		ans=max(2*n-h-w,ans);
+	}
+	h++;
+	{
+		ll w=(n+h-1)/h;
+		ans=max(2*n-h-w,ans);
+	}
+	cout<<ans<<endl;
 }
 
 //メイン
 int main(){
 	ll t;
 	cin>>t;
-	rep(i,t)solve();
+	rep(i,t){
+		solve();
+	}
 	return 0;
 }
