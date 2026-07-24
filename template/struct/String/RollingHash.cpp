@@ -92,6 +92,7 @@ ll RollingHash<T>::md = 1048828087;
 int main(){
 	map<char,ll> table;
 	rep(i,26){
+		//大文字の場合等、対応してるかチェックすること。
 		table['a'+i]=mt()%1048828087;
 	}
 	RollingHash<char> s(table,"abb");

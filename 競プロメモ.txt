@@ -383,8 +383,8 @@ ABC348F
 
 
 ユーザー解説書きたい！
-・430-G
-
+・430-G(IntervalSet)
+・https://atcoder.jp/contests/nikkei2019-final/tasks/nikkei2019_final_a(長さ固定じゃなくクエリで解くと楽)
 
 
 
