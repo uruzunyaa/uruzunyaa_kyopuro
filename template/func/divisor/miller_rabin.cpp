@@ -23,7 +23,9 @@ unsigned ll mod_pow(unsigned ll x, unsigned ll k, unsigned ll mod){
     }
     return res;
 }
- 
+
+//nが素数ならtrue,素数でないならfalse
+//modの無効化を忘れない事
 bool miller_rabin(unsigned ll n){
     if(n < 2 || ((n % 6 != 1) && (n % 6 != 5))) return (n == 2) || (n == 3);
     unsigned ll d = n - 1, s = 0;
@@ -48,6 +50,7 @@ bool miller_rabin(unsigned ll n){
     return true;
 }
 
+//modの無効化を忘れない事
 int main(){
 
 	return 0;

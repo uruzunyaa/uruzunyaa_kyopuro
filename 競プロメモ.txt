@@ -196,6 +196,7 @@ ABC-444-G
 ABC-449-G
 ABC-402-G
 ABC-448-G
+ABC-469-G
 ABC-419-E-Bounus(2乗解法)
 ABC-248-C-Bounus-2(解説の)
 

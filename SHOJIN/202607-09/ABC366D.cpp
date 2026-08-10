@@ -6,8 +6,17 @@ using namespace std;
 #define loop(i,m,n) for(ll i=m;i<=(ll)n;i++)
 #define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
 #define vl vector<ll>
-#define vvl vector<vector<ll>>
-
+#define vvl vector<vl>
+#define vvvl vector<vvl>
+#define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
+#define vpdbg(a) rep(ii,a.size()){cout<<"{"<<a[ii].first<<","<<a[ii].second<<"} ";}cout<<endl;
+#define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
+#define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
+#define inf 4000000000000000000LL
+#define mod 998244353LL
+//#define mod 1000000007LL
+#define eps 0.000000001
+#define circlepi 3.14159265358979323846
 
 /*
 N次元累積和
@@ -22,25 +31,30 @@ get(l, r):
 struct SumsNd {
 	//何次元か
 	ll dim;
-	//各次元のサイズ
+	//各次元のサイズ(元配列の)
+	vl row_size;
+	//各次元のサイズ(累積和配列の)
 	vl sizes;
-	//1次元化の際のsizesの後ろからの累積積
+	//1次元化の際のsizesの後ろからの累積積(累積和配列の)
 	vl sizes_weight;
 	//1次元化された累積和配列
 	vl sums;
 
 	//各次元のサイズと1次元化したデータを渡す
 	SumsNd(vl size_list, vl data) {
-		sizes = size_list;
+		//累積和配列に合わせて、長さを1伸ばす。
+		dim = size_list.size();
+		row_size = size_list;
+		sizes = vl(dim);
+		rep(i,dim)sizes[i]=row_size[i]+1;
 		
-		//累積和配列の全部1伸ばして1次元化の準備をする。
-		dim = sizes.size();
-		sizes_weight.resize(dim);
+		//1次元化の準備として、indexの累積積の管理
+		sizes_weight=vl(dim);
 		sizes_weight[dim-1] = 1;
-		rloop (i,dim-1,i>=1) {
-			sizes_weight[i-1] = sizes_weight[i] * (sizes[i]+1);
+		rloop (i,dim-1,1) {
+			sizes_weight[i-1] = sizes_weight[i] * (sizes[i]);
 		}
-		ll mul_size = sizes_weight[0]*(sizes[0]+1);
+		ll mul_size = sizes_weight[0]*(sizes[0]);
 		sums=vl(mul_size, 0);
 
 		// 元配列を各座標+1の位置へ置く
@@ -48,12 +62,13 @@ struct SumsNd {
 			//多次元座標に直す
 			vl pos(dim);
 			ll x = i;
+			//元の配列側の座標を求める。
 			rrep (d,dim) {
-				pos[d] = x % sizes[d];
-				x /= sizes[d];
+				pos[d] = x % row_size[d];
+				x /= row_size[d];
 			}
 
-			//1加算して戻す。
+			//1加算してから累積和配列に配置する。
 			rep(d, dim) pos[d]++;
 			sums[id(pos)] = data[i];
 		}
@@ -62,7 +77,7 @@ struct SumsNd {
 		rep(d, dim) {
 			rep(i, mul_size) {
 				//注目してる次元の座標を求める。
-				ll pos = (i / sizes_weight[d]) % (sizes[d]+1);
+				ll pos = (i / sizes_weight[d]) % (sizes[d]);
 
 				//0じゃなければ累積和する。
 				if (pos > 0) {
@@ -72,7 +87,7 @@ struct SumsNd {
 		}
 	}
 
-	// 1次元化した時の座標を算出。
+	// 1次元化した時の累積和配列上座標を算出。
 	ll id(const vl& pos) {
 		ll ans = 0;
 		rep(d, dim) {
@@ -124,10 +139,10 @@ int main(){
         cin>>a[i];
     }
     vl dim={n,n,n};
-    SumsNd sums(dim,a);
+	SumsNd sums(dim,a);
+	
     ll q;
     cin>>q;
-    return 0;
 
     while(q--){
         vl l,r;
@@ -141,5 +156,4 @@ int main(){
         ll ans=sums.get(l,r);
         cout<<ans<<endl;
     }
-
 }

@@ -7,7 +7,8 @@ using namespace std;
 #define loop(i,m,n) for(ll i=m;i<=(ll)n;i++)
 #define rloop(i,m,n) for(ll i=m;i>=(ll)n;i--)
 #define vl vector<ll>
-#define vvl vector<vector<ll>>
+#define vvl vector<vl>
+#define vvvl vector<vvl>
 #define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
 #define vpdbg(a) rep(ii,a.size()){cout<<"{"<<a[ii].first<<","<<a[ii].second<<"} ";}cout<<endl;
 #define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
@@ -16,6 +17,7 @@ using namespace std;
 #define mod 998244353LL
 //#define mod 1000000007LL
 #define eps 0.000000001
+#define circlepi 3.14159265358979323846
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
@@ -35,15 +37,15 @@ ll power(ll A, ll B) {
 
 // nのk乗をmodで割った余りを計算
 ll power_mod(ll n, ll k){
-	long long result = 1;
+	n%=mod;
+	ll ans = 1;
 	while (k > 0){
-		if ((k&1) ==1)result=(result*n)%mod;
+		if ((k&1) ==1)ans=(ans*n)%mod;
 		n=n*n%mod;
 		k >>= 1;
 	}
-	return result;
+	return ans;
 }
-
 
 //受け取った2次元文字の外側に、文字pをコーティングする。
 vector<string> pad(vector<string> &s,char p){
@@ -88,8 +90,57 @@ vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
 
+//LISを求める(狭義単調増加)
+vl get_lis(vl a){
+	vl dp(a.size()+1,inf);
+	dp[0]=-inf;
+	vl ans;
+	rep(i,a.size()){
+		auto it=lower_bound(dp.begin(),dp.end(),a[i]);
+		*it=a[i];
+		ans.push_back((ll)(it-dp.begin()));
+	}
+	return ans;
+}
+
+//LISを求める(狭義単調増加)
+ll get_lis2(vl a){
+	ll ans=0;
+	vl dp(a.size()+1,inf);
+	dp[0]=-inf;
+	rep(i,a.size()){
+		auto it=lower_bound(dp.begin(),dp.end(),a[i]);
+		*it=a[i];
+		ans=max(ans,(ll)(it-dp.begin()));
+	}
+	return ans;
+}
+
 //メイン
 int main(){
-	
+	ll n;
+	cin>>n;
+	vl p(n);
+	rep(i,n)cin>>p[i];
+
+	ll ans=0;
+	rep(b,(1LL<<n)){
+		ll x=0,y=0,c=0;
+		rep(i,n){
+			if(b&(1LL<<i)){
+				if(x<p[i]){
+					c++;
+					x=p[i];
+				}
+			}else{
+				if(y<p[i]){
+					c++;
+					y=p[i];
+				}
+			}
+		}
+		ans=max(ans,c);
+	}
+	cout<<ans<<endl;
 	return 0;
 }

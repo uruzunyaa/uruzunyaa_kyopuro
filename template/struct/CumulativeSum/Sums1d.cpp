@@ -14,14 +14,14 @@ struct Sums1d{
 	vl sums;
 	Sums1d(vl row){
 		n=(row.size());
-		sums=vl(n+1);
+		sums=vl(n+1,0);
 		rep(i,n){
 			sums[i+1]=sums[i]+row[i];
 		}
 	}
 	Sums1d(string row_s){
 		n=(row_s.size());
-		sums=vl(n+1);
+		sums=vl(n+1,0);
 		rep(i,n){
 			sums[i+1]=sums[i]+row_s[i]-'0';
 		}
@@ -32,6 +32,11 @@ struct Sums1d{
 		r++;
 		ll ans=sums[r]-sums[l];
 		return ans;
+	}
+	//末尾にXを追加する。
+	void push_back(ll x){
+		n++;
+		sums.push_back(sums.back()+x);
 	}
 };
 

@@ -16,19 +16,21 @@ vl dy={0,1,0,-1};
 //到達不可はinf
 //pairの順序は{行き先,コスト}
 vl dijkstra(vector<vector<pair<ll,ll>>> &g,ll start){
-	priority_queue<pair<ll,ll>> dj;
+	priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<pair<ll,ll>>> dj;
 	vl cost(g.size(),inf);
 	cost[start]=0;
 	dj.push({0,start});
 	while(!dj.empty()){
-		ll nowcost=-dj.top().first;
+		ll nowcost=dj.top().first;
 		ll tmp=dj.top().second;
 		dj.pop();
 		if(cost[tmp]<nowcost)continue;
 		rep(i,g[tmp].size()){
-			if(cost[g[tmp][i].first]>nowcost+g[tmp][i].second){
-				cost[g[tmp][i].first]=nowcost+g[tmp][i].second;
-				dj.push({-cost[g[tmp][i].first],g[tmp][i].first});
+			ll nxnode=g[tmp][i].first;
+			ll nxcost=g[tmp][i].second;
+			if(cost[nxnode]>nowcost+nxcost){
+				cost[nxnode]=nowcost+nxcost;
+				dj.push({cost[nxnode],nxnode});
 			}
 		}
 	}
