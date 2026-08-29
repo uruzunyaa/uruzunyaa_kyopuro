@@ -42,7 +42,7 @@ struct Imos2d{
 			sums[i+1][j]-=a[i][j];
 		}
 	}
-	//[l,r]にxを加算
+	//[{u,l},{d,r}]にxを加算
 	void add(ll u,ll l,ll d,ll r,ll x){
 		if(d<u)return;
 		if(r<l)return;

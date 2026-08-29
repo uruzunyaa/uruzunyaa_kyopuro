@@ -8,7 +8,7 @@ using namespace std;
 #define inf 4000000000000000000LL
 #define mod 998244353LL
 
-//転倒数を求める
+//転倒数を求める,配列を破壊変更してる事に注意
 ll inversion_number(vl &v) {
 	int n = v.size();
 	if (n == 1) return 0;

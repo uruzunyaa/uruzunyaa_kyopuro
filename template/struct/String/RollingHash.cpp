@@ -13,6 +13,8 @@ using namespace std;
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
+
+//ロリハ(HashTableとも言う)
 template<typename T>
 struct RollingHash{
 	//桁の進数
@@ -25,8 +27,13 @@ struct RollingHash{
 	vector<pair<ll,ll>> hash={{0,0}},rhash={{0,0}};
 	map<T,ll> table;
 
-	//(HashTable)
-	RollingHash(map<T,ll> h,string shokis=string()){
+	RollingHash(map<T,ll> h,vector<T> shokis={}){
+		table=h;
+		rep(i,shokis.size()){
+			push_back(shokis[i]);
+		}
+	}
+	RollingHash(map<T,ll> h,string shokis){
 		table=h;
 		rep(i,shokis.size()){
 			push_back(shokis[i]);
@@ -49,7 +56,7 @@ struct RollingHash{
 		rhash.pop_back();
 	}
 
-	//半開区間[l,r]
+	//閉区間[l,r]
 	pair<ll,ll> get_hash(ll l,ll r){
 		if(r<l){
 			pair<ll,ll>ans={0LL,0LL};
@@ -95,9 +102,12 @@ int main(){
 		//大文字の場合等、対応してるかチェックすること。
 		table['a'+i]=mt()%1048828087;
 	}
-	RollingHash<char> s(table,"abb");
+	string ss="abb";
+	RollingHash<char> s(table,ss);
 	s.push_back('a');
 	s.push_back('b');
 	if(s.ispalindrome(0,3))cout<<"Yes"<<endl;
+
+
 	return 0;
 }
