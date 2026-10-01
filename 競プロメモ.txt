@@ -13,7 +13,6 @@
 ABC-464-F
 ARC-221-B
 ARC-221-C
-OUPC-2025-Q
 ARC-221-A
 ABC-457-G
 ARC-216-C
@@ -39,8 +38,6 @@ ABC-447-F
 「優先度：高」
 横浜Regional-2025-A
 横浜Regional-2025-C
-OUPC-2025-H
-OUPC-2025-G
 ABC-446-G
 ABC-445-G
 ABC-250-G
@@ -284,7 +281,9 @@ SeriousOJ-Brain Booster-10-C
 AGC073-B
 MMAContest-20-J
 MMAContest-20-K
-OUPC2025-F
+MMAContest-22-J
+MMAContest-22-K
+MMAContest-22-L
 モノグサ2508_K
 CodeQueen2025-F
 CodeQueen2025-H
