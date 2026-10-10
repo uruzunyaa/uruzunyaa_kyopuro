@@ -1,9 +1,15 @@
 #include<bits/stdc++.h>
 using namespace std;
-#define rep(i,n) for (long long i=0;i<n;i++)
 #define ll long long
-#define vl vector<ll>
+#define rep(i,n) for (long long i=0;i<(ll)n;i++)
+#define loop(i,m,n) for(long long i=m;i<=(ll)n;i++)
+#define vl vector<long long>
+#define vvl vector<vector<long long>>
+#define vdbg(a) rep(ii,a.size()){cout<<a[ii]<<" ";}cout<<endl;
+#define vvdbg(a) rep(ii,a.size()){rep(jj,a[ii].size()){cout<<a[ii][jj]<<" ";}cout<<endl;}
+#define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
 #define inf 4000000000000000000LL
+#define mod 998244353LL
 //マージソートツリー
 //出来る事、数列A_l~A_rの中で、値がx以下の要素の合計を log^2(n)で求めれる。 
 
@@ -46,12 +52,12 @@ vector<pair<ll,ll>> po(vector<pair<ll,ll>> x,vector<pair<ll,ll>> y){
 	return res;
 }
 
-struct MergeSortTree {
+struct MergeSortTreeSums {
 	ll size;
 	ll tall;
 	vector<vector<pair<ll,ll>>> data;
 
-	MergeSortTree(vector<vector<pair<ll,ll>>> a) {
+	MergeSortTreeSums(vector<vector<pair<ll,ll>>> a) {
 		ll n = a.size();
 		data.resize(power(2, logax(2, n) + 1));
 		size = data.size()/2;
@@ -66,7 +72,7 @@ struct MergeSortTree {
 	}
 	pair<ll,ll> get(ll l, ll r, ll m){
 		r++;
-		double ans = 0;
+		ll ans = 0;
 		ll cnt = 0;
 		ll pos = l + size;
 		ll wid = 1;
@@ -107,7 +113,7 @@ int main(){
 
 	vector<vector<pair<ll,ll>>> v(n);
 	rep(i,n)v[i].push_back({a[i],a[i]});
-	MergeSortTree mst(v);
+	MergeSortTreeSums mst(v);
 
 	ll q;
 	cin>>q;

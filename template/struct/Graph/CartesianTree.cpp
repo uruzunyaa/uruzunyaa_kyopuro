@@ -15,8 +15,10 @@ using namespace std;
 #define setdbg(a) for(const auto & ii:a){cout<<ii<<" ";}cout<<endl;
 #define inf 4000000000000000000LL
 #define mod 998244353LL
-
-//最小値を根とする二分木を作る
+// 構築O(N),所得O(1)
+// 各区間の最小値を根に、その左側・右側の区間を再帰的に左右の部分木にしたもの。
+// 最小値が複数ある場合は最も左の要素を根とする。頂点番号は元の配列の添字。
+// 各頂点の親・左右の子（存在しなければ -1）と、部分木が対応する閉区間 [L, R] を取得できる。
 struct CartesianTree {
     int root;  // root
     vector<int> par, left, right;
