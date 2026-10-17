@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define rep(i,n) for (long long i=0;i<(ll)n;i++)
+#define loop(i,m,n) for(long long i=m;i<=(ll)n;i++)
+#define vl vector<long long>
+#define vvl vector<vector<long long>>
+#define inf 4000000000000000000LL
+#define mod 998244353LL
+//#define mod 1000000007LL
+
+#include<atcoder/lazysegtree>
+
+
+using S = long long;
+using F = long long;
+
+const S INF = 8e18;
+const F ID = 8e18;
+
+S op(S a, S b){ return std::min(a, b); }
+S e(){ return INF; }
+S mapping(F f, S x){ return (f == ID ? x : f); }
+F composition(F f, F g){ return (f == ID ? g : f); }
+F id(){ return ID; }
+
+int main(){
+    atcoder::lazy_segtree<S, op, e, F, mapping, composition, id> seg(v);
+	
+}

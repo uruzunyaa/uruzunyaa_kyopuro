@@ -27,5 +27,6 @@ F composition(F f, F g){ return (f == ID ? g : f); }
 F id(){ return ID; }
 
 int main(){
-
+    atcoder::lazy_segtree<S, op, e, F, mapping, composition, id> seg(v);
+	
 }
