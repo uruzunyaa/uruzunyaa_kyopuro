@@ -85,90 +85,16 @@ struct UnionFind {
 };
 
 
-//二次元累積和を生成する。
-struct Sums2d{
-	ll h,w;
-	vvl sums;
-	Sums2d(vvl row){
-		h=(row.size());
-		w=(row[0].size());
-		sums=vvl(h+1,vl(w+1,0));
-		rep(i,h)rep(j,w){
-			sums[i+1][j+1]+=sums[i+1][j];
-			sums[i+1][j+1]+=sums[i][j+1];
-			sums[i+1][j+1]-=sums[i][j];
-			sums[i+1][j+1]+=row[i][j];
-		}
-	}
-	Sums2d(vector<string> row_s){
-		h=(row_s.size());
-		w=(row_s[0].size());
-		sums=vvl(h+1,vl(w+1,0));
-		rep(i,h)rep(j,w){
-			sums[i+1][j+1]+=sums[i+1][j];
-			sums[i+1][j+1]+=sums[i][j+1];
-			sums[i+1][j+1]-=sums[i][j];
-			sums[i+1][j+1]+=row_s[i][j]-'0';
-		}
-	}
-	//左上座標と右下座標を指定する。(半開区間でない)
-	ll get(ll u,ll l,ll d,ll r){
-		if(d<u||r<l)return 0;
-		d++,r++;
-		ll ans=0;
-		ans+=sums[u][l];
-		ans+=sums[d][r];
-		ans-=sums[u][r];
-		ans-=sums[d][l];
-		return ans;
-	}
-};
-
-
 //グリッド問題等用
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
-void solve(){
-	ll h,w,k;
-	cin>>h>>w>>k;
-	vector<string>s(h);
-	rep(i,h){
-		cin>>s[i];
-	}
-
-	ll cnt=0;
-	vvl tmp(h,vl(w,0));
-	rep(i,h)rep(j,w){
-		if(s[i][j]=='.'){
-			tmp[i][j]=1;
-			cnt++;
-		}
-	}
-
-	if(cnt%2==1){
-		cout<<cnt<<endl;
-		return;
-	}
-
-	Sums2d sums(tmp);
-	ll ans=0;
-	rep(i,h)rep(j,w){
-		if(tmp[i][j]==0)continue;
-		ll u=max(i-k,0LL);
-		ll l=max(j-k,0LL);
-		ll d=min(i+k,h-1);
-		ll r=min(j+k,w-1);
-		if(sums.get(u,l,d,r)>=3)ans++;
-	}
-	cout<<ans<<endl;
-	return;
-}
 
 //メイン
+//使ってるライブラリの置き場
+//https://github.com/uruzunyaa/uruzunyaa_kyopuro
+
 int main(){
-	ll t;
-	cin>>t;
-	rep(i,t)solve();
+	
 	return 0;
 }

@@ -91,6 +91,9 @@ vl dy={0,1,0,-1};
 
 
 //メイン
+//使ってるライブラリの置き場
+//https://github.com/uruzunyaa/uruzunyaa_kyopuro
+
 int main(){
 	
 	return 0;
