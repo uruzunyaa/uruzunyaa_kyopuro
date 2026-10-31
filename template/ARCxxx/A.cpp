@@ -93,6 +93,8 @@ void solve(){
 	return;
 }
 
+//使ってるライブラリの置き場
+//https://github.com/uruzunyaa/uruzunyaa_kyopuro
 //メイン
 int main(){
 	ll t;

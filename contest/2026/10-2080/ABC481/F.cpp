@@ -111,20 +111,31 @@ int main(){
 	vl dist2(g.size(),inf);
 	
 	dist[0]=0;
-	dist[2]=0;
+	dist2[0]=0;
 	bfs.push(0);
 	while(!bfs.empty()){
-		ll tmp=bfs.front();
+		vl ttmp;
+		ttmp.push_back(bfs.front());
 		bfs.pop();
-		rep(i,10)for(auto val:g[tmp][i]){
-			ll two=dist2[tmp]*10+i;
-			two%=mod2;
-			if(dist[val]!=inf&&dist2[val]==two)continue;
-			dist[val]=dist[tmp]*10+i;
-			dist[val]%=mod;
-			dist2[val]=dist2[tmp];
-			dist2[val]%=mod2;
-			bfs.push(val);
+		while(!bfs.empty()){
+			if(dist[bfs.front()]==dist[ttmp[0]]&&dist2[bfs.front()]==dist2[ttmp[0]]){
+				ttmp.push_back(bfs.front());
+				bfs.pop();
+			}else{
+				break;
+			}
+		}
+		rep(i,10){
+			for(auto tmp:ttmp){
+				for(auto val:g[tmp][i]){
+					if(dist[val]!=inf)continue;
+					dist[val]=dist[tmp]*10+i;
+					dist[val]%=mod;
+					dist2[val]=dist2[tmp]*3435+i;
+					dist2[val]%=mod2;
+					bfs.push(val);
+				}
+			}
 		}
 	}
 	loop(i,1,n-1){
