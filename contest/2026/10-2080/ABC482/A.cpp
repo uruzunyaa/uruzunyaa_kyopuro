@@ -94,6 +94,13 @@ vl dy={0,1,0,-1};
 //使ってるライブラリの置き場
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 int main(){
-	
+	ll cnt=0;
+	string s;
+	cin>>s;
+	rep(i,s.size()){
+		if(s[i]=='o')cnt++;
+	}
+	if(cnt%2==0)cout<<"even"<<endl;
+	else cout<<"odd"<<endl;
 	return 0;
 }

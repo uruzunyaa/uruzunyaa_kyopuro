@@ -95,6 +95,41 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll n;
+	cin>>n;
+	vl x(n);
+	rep(i,n)cin>>x[i];
+	if(n==1){
+		cout<<0<<endl;
+		return 0;
+	}
+	cout<<(x.back()-x.front())/2<<endl;
+	loop(i,1,n-2){
+		//初手左
+		ll ans=inf;
+		{
+			ll time=x[i]-x[i-1];
+			time/=2;
+			ll zahyo=x[i]-time;
+			ll migi=x.back()-time;
+			ll hidari=x.front()+time;
+			ll tmp=max(migi-zahyo,zahyo-hidari);
+			tmp/=2;
+			ans=min(tmp+time,ans);
+		}
+		//初手右
+		{
+			ll time=x[i+1]-x[i];
+			time/=2;
+			ll zahyo=x[i]+time;
+			ll migi=x.back()-time;
+			ll hidari=x.front()+time;
+			ll tmp=max(migi-zahyo,zahyo-hidari);
+			tmp/=2;
+			ans=min(tmp+time,ans);
+		}
+		cout<<ans<<endl;
+	}
+	cout<<(x.back()-x.front())/2<<endl;
 	return 0;
 }

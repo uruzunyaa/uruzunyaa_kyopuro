@@ -94,7 +94,103 @@ vl dy={0,1,0,-1};
 //使ってるライブラリの置き場
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
+//純粋素因数分解 O(√N)
+vector<ll> makePrime(ll n){
+	vector<ll> factors;
+	while (n % 2 == 0) {
+		factors.push_back(2);
+		n /= 2;
+	}
+	for (ll i=3; i*i<=n;i+=2) {
+		while (n%i == 0) {
+			factors.push_back(i);
+			n /= i;
+		}
+	}
+	if (n > 2) {
+		factors.push_back(n);
+	}
+	return factors;
+}
+
+
+//グラフgの頂点startからの最短経路を全ての頂点に対して求める。
+vl bfs(vvl &g,vl start){
+	queue<ll> bfs;
+	vl dist(g.size(),inf);
+	rep(i,start.size()){
+		if(dist[start[i]]==0)continue;
+		dist[start[i]]=0;
+		bfs.push(start[i]);
+	}
+	while(!bfs.empty()){
+		ll tmp=bfs.front();
+		bfs.pop();
+		rep(i,g[tmp].size()){
+			ll next=g[tmp][i];
+			if(dist[next]!=inf)continue;
+			dist[next]=dist[tmp]+1;
+			bfs.push(next);
+		}
+	}
+	return dist;
+}
+
 int main(){
+	ll n,m;
+	cin>>n>>m;
+
+	if(m==1){
+		cout<<1<<endl;
+		return 0;
+	}
+
+	if(n==1){
+		rep(i,m){
+			if(i!=1){
+				cout<<-1<<endl;
+			}else{
+				cout<<1<<endl;
+			}
+		}
+		return 0;
+	}
 	
+	vl lists=makePrime(n);
+	vector<pair<ll,ll>> p;
+	rep(i,lists.size()){
+		if(p.size()==0||lists[i]!=p.back().first){
+			p.push_back({lists[i],1});
+		}else{
+			p.back().second++;
+		}
+	}
+	vl yakusu;
+	for(ll i=1;i*i<=n;i++){
+		if(n%i!=0)continue;
+		yakusu.push_back(i);
+		if(i*i!=n)yakusu.push_back(n/i);
+	}
+	sort(yakusu.begin(),yakusu.end());
+	
+	rep(i,yakusu.size()){
+		yakusu[i]%=m;
+	}
+
+	vvl g(m);
+	rep(i,m){
+		rep(j,p.size()){
+			ll tmp=power(p[j].first,p[j].second);
+			tmp%=m;
+			g[i].push_back((tmp*i)%m);
+		}
+	}
+	vl ans=bfs(g,yakusu);
+	rep(i,ans.size()){
+		if(ans[i]==inf)ans[i]=-2;
+		ans[i]++;
+		cout<<ans[i]<<endl;
+	}
+
 	return 0;
 }

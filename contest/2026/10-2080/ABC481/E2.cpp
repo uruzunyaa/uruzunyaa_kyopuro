@@ -91,8 +91,6 @@ class Point{
 public:
 	ll x,y;
 	bool check=false;
-	//Point(){}
-	//Point(ll x, ll y):x(x),y(y){}
 };
 
 //aの方が小さいか。
@@ -138,6 +136,7 @@ void solve(){
 	bool f=true;
 	rep(r,n){
 		if(p[r].x>=0){
+			ans=max(ans,r+1);
 			continue;
 		}
 		f=false;
@@ -150,10 +149,6 @@ void solve(){
 		ll cnt=r-l+1;
 		ans=max(ans,cnt);
 		ans=max(ans,n-cnt+1);
-	}
-	if(f){
-		cout<<n<<endl;
-		return;
 	}
 	cout<<ans<<endl;
 	

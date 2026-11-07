@@ -95,6 +95,29 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll h,w,n,q;
+	cin>>h>>w>>n>>q;
+	vl r(n),c(n);
+	rep(i,n){
+		cin>>r[i]>>c[i];
+	}
+	sort(r.begin(),r.end());
+	sort(c.begin(),c.end());
+	while(q--){
+		ll t;
+		cin>>t;
+		if(t==1){
+			ll u,d;
+			cin>>u>>d;
+			ll ans=upper_bound(r.begin(),r.end(),d)-lower_bound(r.begin(),r.end(),u);
+			cout<<ans<<endl;
+		}else{
+			
+			ll u,d;
+			cin>>u>>d;
+			ll ans=upper_bound(c.begin(),c.end(),d)-lower_bound(c.begin(),c.end(),u);
+			cout<<ans<<endl;
+		}
+	}
 	return 0;
 }

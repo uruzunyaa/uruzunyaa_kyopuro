@@ -95,6 +95,42 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
+	vector<string> s(5);
+	rep(i,5)cin>>s[i];
 	
+	ll ans=5;
+	rep(i,5){
+		ll cnt=5;
+		rep(j,5){
+			if(s[i][j]=='o')cnt--;
+		}
+		ans=min(ans,cnt);
+	}
+	
+	rep(j,5){
+		ll cnt=5;
+		rep(i,5){
+			if(s[i][j]=='o')cnt--;
+		}
+		ans=min(ans,cnt);
+	}
+
+	{
+		ll cnt=5;
+		rep(i,5){
+			if(s[i][i]=='o')cnt--;
+		}
+		ans=min(ans,cnt);
+	}
+
+	{
+		ll cnt=5;
+		rep(i,5){
+			if(s[i][4-i]=='o')cnt--;
+		}
+		ans=min(ans,cnt);
+	}
+
+	cout<<ans<<endl;
 	return 0;
 }
