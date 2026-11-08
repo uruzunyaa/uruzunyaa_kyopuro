@@ -89,9 +89,16 @@ struct UnionFind {
 vl dx={1,0,-1,0};
 vl dy={0,1,0,-1};
 
+void solve(){
+	return;
+}
 
+//使ってるライブラリの置き場
+//https://github.com/uruzunyaa/uruzunyaa_kyopuro
 //メイン
 int main(){
-	
+	ll t;
+	cin>>t;
+	rep(i,t)solve();
 	return 0;
 }
