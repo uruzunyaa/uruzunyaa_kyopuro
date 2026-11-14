@@ -140,31 +140,19 @@ vector<pair<ll,ll>> make_pair_prime(ll n){
 	return factors;
 }
 
-//グラフgの頂点startからの最短経路を全ての頂点に対して求める。
-vl bfs(vvl &g,vl start){
-	queue<ll> bfs;
-	vl dist(g.size(),inf);
-	rep(i,start.size()){
-		if(dist[start[i]]==0)continue;
-		dist[start[i]]=0;
-		bfs.push(start[i]);
+//約数列挙
+vl get_divisor(ll n){
+	vl ans;
+	for(ll i=1;i*i<=n;i++){
+		if(n%i!=0)continue;
+		ans.push_back(i);
+		if(i*i!=n)ans.push_back(n/i);
 	}
-	while(!bfs.empty()){
-		ll tmp=bfs.front();
-		bfs.pop();
-		rep(i,g[tmp].size()){
-			ll next=g[tmp][i];
-			if(dist[next]!=inf)continue;
-			dist[next]=dist[tmp]+1;
-			bfs.push(next);
-		}
-	}
-	return dist;
+	sort(ans.begin(),ans.end());
+	return ans;
 }
 
-int main(){
-	ll n,m;
-	cin>>n>>m;
+int main2(ll n,ll m){
 
 	//コーナーケースを処理
 	if(m==1){
@@ -186,12 +174,9 @@ int main(){
 	vector<pair<ll,ll>> p=make_pair_prime(n);
 
 	//約数列挙
-	vl list;
-	for(ll i=1;i*i<=n;i++){
-		if(n%i!=0)continue;
-		list.push_back(i);
-		if(i*i!=n)list.push_back(n/i);
-	}
+	vl list=get_divisor(n);
+
+	
 	
 	vl ans(m,inf);
 	//約数を全てMで割ったあまりにする。
@@ -200,30 +185,31 @@ int main(){
 		ans[list[i]]=1;
 	}
 
-	vl sexni(m);
-	rep(i,m){
-		rep(j,p.size()){
-			ll tmp=power(p[j].first,p[j].second);
-			tmp%=m;
-			sexni.push_back((tmp*i)%m);
-		}
+	vl sexni;
+	rep(j,p.size()){
+		ll tmp=power(p[j].first,p[j].second);
+		tmp%=m;
+		sexni.push_back(tmp%m);
 	}
 
+	//2以上をBFS探索
 	loop(i,2,inf){
 		vl nlist;
 		if(list.empty())break;
 		for(auto val:sexni){
+			vl tmplist;
 			for(auto node:list){
 				ll nx=(node*val)%m;
 				if(ans[nx]==inf){
 					ans[nx]=i;
-					list.push_back(nx);
+					tmplist.push_back(nx);
 					nlist.push_back(nx);
 				}
 			}
+			for(auto nums:tmplist)list.push_back(nums);
 		}
 		swap(list,nlist);
-
+		//vdbg(list);
 	}
 
 	rep(i,ans.size()){
@@ -233,3 +219,21 @@ int main(){
 
 	return 0;
 }
+
+int main(){
+	ll n,m;
+	cin>>n>>m;
+	main2(n,m);
+	return 0;
+}
+
+// int main(){
+// 	ll nmx,mmx;
+// 	cin>>nmx>>mmx;
+// 	loop(i,1,nmx){
+// 		loop(j,1,mmx){
+// 			cout<<"next is "<<i<<" "<<j<<endl;
+// 			main2(i,j);
+// 		}
+// 	}
+// }

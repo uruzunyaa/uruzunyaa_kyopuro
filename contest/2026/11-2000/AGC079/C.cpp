@@ -21,10 +21,6 @@ using namespace std;
 random_device rnd;// 非決定的な乱数生成器
 mt19937 mt(rnd());// メルセンヌ・ツイスタの32ビット版、引数は初期シード
 
-//#include<boost/multiprecision/cpp_int.hpp>
-//#define bbi boost::multiprecision::cpp_int
-//#include<atcoder/lazysegtree>
-
 
 //整数同士の累乗の計算をする。
 ll power(ll A, ll B) {
@@ -35,61 +31,244 @@ ll power(ll A, ll B) {
 	return result;
 }
 
-// nのk乗をmodで割った余りを計算
-ll power_mod(ll n, ll k){
-	n%=mod;
-	ll ans = 1;
-	while (k > 0){
-		if ((k&1) ==1)ans=(ans*n)%mod;
-		n=n*n%mod;
-		k >>= 1;
+//底がaの対数xを計算。ただし小数点は繰り上げ。
+ll logax(ll a, ll x){
+	if(x<=1)return 0;
+	ll result = 1;
+	ll power = 1;
+	while (power < (x+a-1) / a){
+		power *= a;
+		result++;
 	}
-	return ans;
+	return result;
 }
 
-//受け取った2次元文字の外側に、文字pをコーティングする。
-vector<string> pad(vector<string> &s,char p){
-	ll h=s.size();
-	ll w=s[0].size();
-	vector<string> res(h+2,string(w+2,p));
-	rep(i,h)rep(j,w)res[i+1][j+1]=s[i][j];
-	return res;
-}
+//powerとlogが前提条件
+//セグ木,乗せる値の型が必要
+//max_rightやmin_left使用時には2の累乗に拡張されている事に注意
+template<typename T>
+struct SegTree{
+	ll size;
+	ll tall;
+	vector<T> data;
+	function<T(T,T)> p;
+	//セグ木に乗せる値の初期値をa配列にし、putの関数をセグ木に乗せる、dをデフォルト値に。
+	SegTree(vector<T> a,function<T(T,T)> put,T d) : data(power(2,logax(2,a.size())+1)) {
+		size = data.size()/2;
+		tall=logax(2,size)+1;
+		p=put;
+		ll tmp=size;
+		data = vector<T>(size*2,d);
+		while(tmp!=0){
+			if(tmp==size)rep(i,a.size())data[tmp+i]=a[i];
+			else rep(i,tmp) data[tmp+i]=p(data[2*(tmp+i)],data[2*(tmp+i)+1]);
+			tmp/=2;
+		}
+	}
+	//更新、t番目の値をxにする。
+	void update(ll t,T x){
+		t+=size;
+		while(t!=0){
+			if(t>=size)data[t]=x;
+			else data[t]=p(data[2*t],data[2*t+1]);
+			t/=2;
+		}
+	}
+	//取得、l~r区間内の評価値を取得する。
+	T get(ll l,ll r){
+		//lとrが範囲外なら範囲内に正す
+		l=max(0LL,l);
+		r=min(r,size-1);
+		r++;
+		T ans=data[0];
+		ll pos=l+size;
+		ll wid=1;
+		//出来る限り上に上げきる。
+		while(l+(wid*2)<=r){
+			while(l%(wid*2)==0&&l+(wid*2)<=r)pos/=2,wid*=2;
+			ans=p(ans,data[pos]);
+			pos++;
+			l+=wid;
+		}
+		//上げ終わったので今度は下げる
+		while(l!=r){
+			while(l+wid>r)pos*=2,wid/=2;
+			ans=p(ans,data[pos]);
+			pos++;
+			l+=wid;
+		}
+		return ans;
+	}
+	/// @option_start max_right,min_left
 
-// Union-Find
-struct UnionFind {
-	vector<int> par, siz;
-	UnionFind(int n) : par(n, -1) , siz(n, 1) { }
-	// 根を求める
-	int root(int x) {
-		if (par[x] == -1) return x;
-		else return par[x] = root(par[x]);
+	// [l, r] (両端含む) で cond(get(l, r)) が true となる最大の r を返す
+	// cond は「区間の集約値 -> bool」
+	// 見つからなければ l-1 を返す
+	ll max_right(ll l, function<bool(T)> cond){
+		if (l < 0) l = 0;
+		if (l >= size) return size - 1;
+		T sm = data[0];
+		ll i = l + size; 
+		do {
+			while ((i & 1) == 0) i >>= 1;
+			if (!cond(p(sm, data[i]))) {
+				while (i < size) {
+					i <<= 1;
+					if (cond(p(sm, data[i]))) {
+						sm = p(sm, data[i]);
+						i++;
+					}
+				}
+				return i - size - 1;
+			}
+			sm = p(sm, data[i]);
+			i++;
+		} while ((i & -i) != i);
+		return size - 1;
 	}
-	// x と y が同じグループに属するかどうか (根が一致するかどうか)
-	bool issame(int x, int y) {
-		return root(x) == root(y);
+
+
+	// [l, r] (両端含む) で cond(get(l, r)) が true となる最小の l を返す
+	// 見つからなければ r+1 を返す
+	ll min_left(ll r, function<bool(T)> cond){
+		if (r < 0) return 0;
+		if (r >= size) r = size - 1;
+		T sm = data[0];               // 単位元
+		ll i = r + 1 + size;          // ACLは [l, r) なので r+1 から始める
+
+		do {
+			i--;                      // まず一つ左へ
+			while (i > 1 && (i & 1)) i >>= 1;  // 右子を抜けて親に上がる
+			if (!cond(p(data[i], sm))) {
+				// ここから下に降りてちょうど壊れる左端を探す
+				while (i < size) {
+					i = i * 2 + 1;    // 右子へ
+					if (cond(p(data[i], sm))) {
+						sm = p(data[i], sm);
+						i--;          // 左兄弟へ
+					}
+				}
+				return i + 1 - size;
+			}
+			sm = p(data[i], sm);
+		} while ((i & -i) != i);
+
+		return 0;
 	}
-	// x を含むグループと y を含むグループとを併合する
-	bool unite(int x, int y) {
-		x = root(x), y = root(y);
-		if (x == y) return false; 
-		if (siz[x] < siz[y]) swap(x, y);
-		par[y] = x;
-		siz[x] += siz[y];
-		return true;
-	}
-	// x を含むグループのサイズ
-	int size(int x) {
-		return siz[root(x)];
-	}
+	/// @option_end max_right,min_left
 };
 
-
-//グリッド問題等用
-vl dx={1,0,-1,0};
-vl dy={0,1,0,-1};
+ll mx(ll a,ll b){return max(a,b);}
 
 void solve(){
+	ll n;
+	cin>>n;
+	vl p(n);
+	rep(i,n)cin>>p[i],p[i]--;
+	
+	//シュミレーションして各数字の消えるタイミングを持つ。
+	vvl kesu_list(n);
+	vl num_kieru_ind(n);
+	set<ll> st;
+	ll kesu=0;
+	rep(i,n){
+		st.insert(p[i]);
+		while(st.count(kesu)){
+			kesu_list[i].push_back(kesu);
+			num_kieru_ind[kesu]=i;
+			kesu++;
+		}
+	}
+
+	//各インデックスに対する消えるタイミングを出す。
+	vl ind_kieru_ind(n);
+	rep(i,n){
+		ind_kieru_ind[i]=num_kieru_ind[p[i]];
+	}
+
+	bool isright=true;
+	SegTree<ll> seg(p,mx,-inf);
+	deque<ll> kyu;
+	
+	kesu=0;
+	ll ans=0;
+	rep(i,n){
+		//キューへの追加フェーズ
+		if(kyu.size()<=1){
+			//空または1要素の時、取り合えず追加。
+			if(isright)kyu.push_back(p[i]);
+			else kyu.push_front(p[i]);
+		}else if(p[i]>kyu.back()||p[i]>kyu.front()){
+			//最小値でないなら、大きい側へ追加
+			if(kyu.front()<kyu.back()){
+				//右へ追加
+				if(!isright){
+					isright=true;
+					ans++;
+				}
+				kyu.push_back(p[i]);
+			}else{
+				//左へ追加
+				if(isright){
+					isright=false;
+					ans++;
+				}
+				kyu.push_front(p[i]);
+			}
+		}else{
+			//最小値の時、消えるまでに小さい方よりデカいのが来るなら、小さい方へ。
+			//そうでないなら、そのまま入れる。
+			//1大きい時もそっちに入れる。
+			ll lrmins=min(kyu.front(),kyu.back());
+			ll kierumade_max=seg.get(i,ind_kieru_ind[i]);
+			if(kierumade_max>lrmins){
+				if(kyu.front()>kyu.back()){
+					//右へ追加
+					if(!isright){
+						isright=true;
+						ans++;
+					}
+					kyu.push_back(p[i]);
+				}else{
+					//左へ追加
+					if(isright){
+						isright=false;
+						ans++;
+					}
+					kyu.push_front(p[i]);
+				}
+			}else{
+				if(isright)kyu.push_back(p[i]);
+				else kyu.push_front(p[i]);
+			}
+		}
+
+		//出力フェーズ
+		for(auto val:kesu_list[i]){
+			if(kyu.size()==1){
+				kyu.pop_back();
+			}else if(kyu.front()==val){
+				if(!isright){
+					isright=true;
+					ans++;
+				}
+				kyu.pop_front();
+			}else if(kyu.back()==val){
+				if(isright){
+					isright=false;
+					ans++;
+				}
+				kyu.pop_back();
+			}else{
+				cout<<-1<<endl;
+				return;
+			}
+			//vdbg(kyu);
+		}
+		//cout<<ans<<endl;
+	}
+	cout<<ans<<endl;
+
 	return;
 }
 
