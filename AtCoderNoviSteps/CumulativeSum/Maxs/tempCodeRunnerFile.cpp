@@ -96,31 +96,31 @@ vl dy={0,1,0,-1};
 
 int main(){
 	ll n;
-	cin>>n;
-	vector<pair<ll,ll>> a(n+1);
-	vl b(n);
-	rep(i,n+1)cin>>a[i].first,a[i].second=i;
-	rep(i,n)cin>>b[i];
+    string t;
+    cin>>n>>t;
 
-	sort(a.begin(),a.end());
-	sort(b.begin(),b.end());
-
-	vl c(n+1);
-
-	map<ll,ll> mp;
-	rep(i,n){
-		mp[abs(a[i].first-b[i])]++;
-	}
-
-	c[a[n].second]=mp.rbegin()->first;
-	rrep(i,n){
-		mp[abs(a[i+1].first-b[i])]++;
-		mp[abs(a[i].first-b[i])]--;
-		if(mp[abs(a[i].first-b[i])]==0){
-			mp.erase(abs(a[i].first-b[i]));
-		}
-		c[a[i].second]=mp.rbegin()->first;
-	}
-	vdbg(c);
+    vl mae,usiro;
+    rep(i,n){
+        string s;
+        cin>>s;
+        ll pre=0;
+        ll suf=0;
+        rep(i,min(t.size(),s.size())){
+            if(s[i]==t[i])pre++;
+            else break;
+        }
+        rep(i,min(t.size(),s.size())){
+            if(s[s.size()-i-1]==t[t.size()-i-1])suf++;
+            else break;
+        }
+        mae.push_back(pre);
+        usiro.push_back(suf);
+    }
+    sort(usiro.begin(),usiro.end());
+    ll ans=0;
+    rep(i,n){
+        ans+=usiro.end()-lower_bound(usiro.begin(),usiro.end(),t.size()-mae[i]);
+    }
+    cout<<ans<<endl;
 	return 0;
 }
