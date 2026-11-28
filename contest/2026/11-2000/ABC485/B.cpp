@@ -95,6 +95,29 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll n,m;
+	cin>>n>>m;
+	vector<string> s(n);
+	rep(i,n)cin>>s[i];
+	rep(i,n){
+		bool f=true;
+		rep(j,m){
+			if(s[i][j]=='o')f=false;
+		}
+		if(f){
+			cout<<"Faucet "<<i+1<<endl;
+			return 0;
+		}
+	}
+	rep(j,m){
+		bool f=true;
+		rep(i,n){
+			if(s[i][j]=='o')f=false;
+		}
+		if(f){
+			cout<<"Drain "<<j+1<<endl;
+			return 0;
+		}
+	}
 	return 0;
 }

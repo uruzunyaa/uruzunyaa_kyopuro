@@ -34,12 +34,14 @@ template<typename T>
 struct SegTree{
 	ll size;
 	ll tall;
+	ll motosize;
 	vector<T> data;
 	function<T(T,T)> p;
 	//セグ木に乗せる値の初期値をa配列にし、putの関数をセグ木に乗せる、dをデフォルト値に。
 	SegTree(vector<T> a,function<T(T,T)> put,T d) : data(power(2,logax(2,a.size())+1)) {
 		size = data.size()/2;
 		tall=logax(2,size)+1;
+		motosize=a.size();
 		p=put;
 		ll tmp=size;
 		data = vector<T>(size*2,d);
@@ -60,13 +62,17 @@ struct SegTree{
 	}
 	//取得、l~r区間内の評価値を取得する。
 	T get(ll l,ll r){
-		//lとrが範囲外なら範囲内に正す
+		//lとrが範囲外なら範囲内に正す,区間無しなら単位元を返す。
 		l=max(0LL,l);
-		r=min(r,size-1);
+		r=min(r,motosize-1);
+		if(l>r)return data[0];
+
+		//セグ木の内部処理の初期化
 		r++;
 		T ans=data[0];
 		ll pos=l+size;
 		ll wid=1;
+
 		//出来る限り上に上げきる。
 		while(l+(wid*2)<=r){
 			while(l%(wid*2)==0&&l+(wid*2)<=r)pos/=2,wid*=2;
@@ -89,8 +95,10 @@ struct SegTree{
 	// cond は「区間の集約値 -> bool」
 	// 見つからなければ l-1 を返す
 	ll max_right(ll l, function<bool(T)> cond){
+		//範囲外lの処理
 		if (l < 0) l = 0;
-		if (l >= size) return size - 1;
+		if (l >= motosize) return motosize - 1;
+
 		T sm = data[0];
 		ll i = l + size; 
 		do {
@@ -115,8 +123,10 @@ struct SegTree{
 	// [l, r] (両端含む) で cond(get(l, r)) が true となる最小の l を返す
 	// 見つからなければ r+1 を返す
 	ll min_left(ll r, function<bool(T)> cond){
+		//範囲外のrの処理
 		if (r < 0) return 0;
-		if (r >= size) r = size - 1;
+		if (r >= motosize) r = motosize - 1;
+
 		T sm = data[0];               // 単位元
 		ll i = r + 1 + size;          // ACLは [l, r) なので r+1 から始める
 

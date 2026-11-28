@@ -94,6 +94,9 @@ vl dy={0,1,0,-1};
 //使ってるライブラリの置き場
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 int main(){
-	
+	ll a,b;
+	cin>>a>>b;
+	if(a*b<0)cout<<"No"<<endl;
+	else cout<<"Yes"<<endl;
 	return 0;
 }

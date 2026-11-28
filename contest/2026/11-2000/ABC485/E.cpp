@@ -94,7 +94,45 @@ vl dy={0,1,0,-1};
 //使ってるライブラリの置き場
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
+
+//グラフgの頂点startからの最短経路を全ての頂点に対して求める。
+vector<map<ll,ll>> bfs(vector<vector<pair<ll,ll>>> &g,ll start){
+	queue<pair<ll,ll>> bfs;
+	vector<map<ll,ll>> dist(g.size());
+	dist[start][0]=0;
+	bfs.push({start,0});
+	while(!bfs.empty()){
+		pair<ll,ll> node=bfs.front();
+		bfs.pop();
+		for(auto val:g[node.first]){
+			ll next=val.first;
+			if(dist[next].size()==2)continue;
+			if(dist[next].count(val.second))continue;
+			if(val.second==node.second)continue;
+			dist[next][val.second]=dist[node.first][node.second]+1;
+			bfs.push({next,val.second});
+		}
+	}
+	return dist;
+}
+
+
 int main(){
-	
+	ll n,m;
+	cin>>n>>m;
+	vector<vector<pair<ll,ll>>> g(n);
+	rep(i,m){
+		ll u,v,c;
+		cin>>u>>v>>c;
+		u--,v--;
+		g[u].push_back({v,c});
+	}
+	vector<map<ll,ll>> mp=bfs(g,0);
+	ll ans=inf;
+	for(auto val:mp[n-1]){
+		ans=min(ans,val.second);
+	}
+	if(ans==inf)ans=-1;
+	cout<<ans<<endl;
 	return 0;
 }

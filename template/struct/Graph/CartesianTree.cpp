@@ -20,15 +20,15 @@ using namespace std;
 // 最小値が複数ある場合は最も左の要素を根とする。頂点番号は元の配列の添字。
 // 各頂点の親・左右の子（存在しなければ -1）と、部分木が対応する閉区間 [L, R] を取得できる。
 struct CartesianTree {
-    int root;  // root
-    vector<int> par, left, right;
-	vector<pair<int,int>> interval;
+    ll root;  // root
+    vl par, left, right;
+	vector<pair<ll,ll>> interval;
 
     CartesianTree() : root(0) {}
     CartesianTree(const vl & v) :
     root(0), par(v.size(), -1), left(v.size(), -1), right(v.size(), -1),interval(v.size(),{0,v.size()-1}) {
         vl st(v.size(), 0);
-        int top = 0;
+        ll top = 0;
         loop (i,1,v.size()-1) {
             if (v[st[top]] > v[i]) {
                 while (top >= 1 && v[st[top - 1]] > v[i]) top--;
@@ -48,10 +48,10 @@ struct CartesianTree {
             }
         }
 		//各木についての区間を書き込む
-		queue<int> qu;
+		queue<ll> qu;
 		qu.push(root);
 		while(!qu.empty()){
-			int i=qu.front();
+			ll i=qu.front();
 			qu.pop();
 			if(left[i]!=-1){
 				interval[left[i]]={interval[i].first,i-1};
@@ -64,13 +64,13 @@ struct CartesianTree {
 		}
     }
 	//親を取得する
-	int get_par(int i){return par[i];}
+	ll get_par(ll i){return par[i];}
 	//左の子を取得する
-	int get_left_child(int i){return left[i];}
+	ll get_left_child(ll i){return left[i];}
 	//右の子を取得する
-	int get_right_child(int i){return right[i];}
+	ll get_right_child(ll i){return right[i];}
 	//子要素区間を取得する[L,R]の形
-	pair<int,int> get_interval(int i){return interval[i];}
+	pair<ll,ll> get_interval(ll i){return interval[i];}
 };
 
 int main(){

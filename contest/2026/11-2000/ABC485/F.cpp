@@ -95,6 +95,47 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll n,m;
+	cin>>n>>m;
+	vvl g(m+1);
+	ll zero=0;
+	rep(i,n){
+		ll c,v;
+		cin>>c>>v;
+		g[m-c].push_back(v);
+		zero+=v;
+	}
+
+	//dp[i][j]=i個0じゃないのを選んで、合計がj以下の時の最大スコア
+	vector<deque<ll>> dp(n+1,deque<ll>(m+1,-inf));
+	rep(i,m+1)dp[0][i]=0;
+	//dp[0][0]=0;
+
+	deque<ll> ans;
+	rep(c,m+1){
+		loop(i,1,n){
+			rep(j,i){
+				dp[i].push_front(-inf);
+				dp[i].pop_back();
+			}
+		}
+		for(auto val:g[c]){
+			zero-=val;
+			//下に遷移
+			rrep(i,n)rep(j,m+1){
+				dp[i+1][j]=max(dp[i][j]+val,dp[i+1][j]);
+			}
+			//右に向かって反映
+			rep(i,n+1)rep(j,m){
+				dp[i][j+1]=max(dp[i][j],dp[i][j+1]);
+			}
+		}
+		ll tmpmx=-inf;
+		rep(i,n+1)tmpmx=max(tmpmx,dp[i][m]);
+		ans.push_front(tmpmx+zero);
+	}
+	rep(i,m+1){
+		cout<<ans[i]<<endl;
+	}
 	return 0;
 }

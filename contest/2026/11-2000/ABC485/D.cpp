@@ -95,6 +95,38 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll n;
+	string s;
+	cin>>n>>s;
+	ll mnl=inf,mxr=-inf;
+	set<char> stl,str;
+	rep(i,n){
+		stl.insert(s[i]);
+		if(stl.size()==3){
+			mnl=i+1;
+			break;
+		}
+	}
+	rrep(i,n){
+		str.insert(s[i]);
+		if(str.size()==3){
+			mxr=i-1;
+			break;
+		}
+	}
+
+	ll ans=0;
+	ll l=mnl;
+	map<char,ll> mp;
+	loop(r,mnl,mxr){
+		mp[s[r]]++;
+		while(mp.size()==3){
+			mp[s[l]]--;
+			if(mp[s[l]]==0)mp.erase(s[l]);
+			l++;
+		}
+		ans+=l-mnl;
+	}
+	cout<<ans<<endl;
 	return 0;
 }

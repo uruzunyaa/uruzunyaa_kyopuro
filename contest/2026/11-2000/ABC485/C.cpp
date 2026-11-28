@@ -95,6 +95,37 @@ vl dy={0,1,0,-1};
 //https://github.com/uruzunyaa/uruzunyaa_kyopuro
 
 int main(){
-	
+	ll n;
+	cin>>n;
+	vl a(n);
+	rep(i,n)cin>>a[i];
+
+	vl migi(n,inf);
+	ll nowc=a[n-1];
+	ll zahyo=inf;
+	rrep(i,n-1){
+		if(nowc!=a[i]){
+			zahyo=i+1;
+			nowc=a[i];
+		}
+		migi[i]=zahyo;
+	}
+
+	vl hidari(n,-inf);
+	nowc=a[0];
+	zahyo=-inf;
+	loop(i,1,n-1){
+		if(nowc!=a[i]){
+			zahyo=i-1;
+			nowc=a[i];
+		}
+		hidari[i]=zahyo;
+	}
+
+	vl ans(n);
+	rep(i,n){
+		ans[i]=min(migi[i]-i,i-hidari[i]);
+	}
+	vdbg(ans);
 	return 0;
 }
